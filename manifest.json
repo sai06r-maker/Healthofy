@@ -1,0 +1,62 @@
+{
+  "name": "Healthofy | AI Health Companion",
+  "short_name": "Healthofy",
+  "description": "AI-powered health tools: hydration, calories, BMI, fitness, nutrition and recovery.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#00D4FF",
+  "lang": "en",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "HydroFlow",
+      "short_name": "Hydro",
+      "description": "Calculate your daily water intake",
+      "url": "./index.html#hydro",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Nutrition AI",
+      "short_name": "Nutrition",
+      "description": "Get a personalized nutrition plan",
+      "url": "./index.html#nutrition",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Fitness AI",
+      "short_name": "Fitness",
+      "description": "Generate your workout plan",
+      "url": "./index.html#fitness",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
