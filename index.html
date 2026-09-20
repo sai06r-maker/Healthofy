@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthofy | AI Health Companion</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00D4FF">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Clash+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #00D4FF;
+  --primary-light: #00E5FF;
+  --primary-dark: #0099CC;
+  --secondary: #00B4D8;
+  --accent: #4361EE;
+  --success: #00D4FF;
+  --warning: #00B4D8;
+  --danger: #FF4444;
+  --dark: #000000;
+  --light: #FFFFFF;
+  --gray: #8899AA;
+  --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  --bg-body: #000000;
+  --text-primary: #FFFFFF;
+  --nav-bg: rgba(0, 0, 0, 0.95);
+  --input-bg: rgba(0, 0, 0, 0.5);
+  --result-bg: rgba(0, 212, 255, 0.04);
+  --card-bg: rgba(0, 212, 255, 0.03);
+  --border-color: rgba(0, 212, 255, 0.08);
+  --disclaimer-bg: rgba(255, 68, 68, 0.06);
+  --disclaimer-border: rgba(255, 68, 68, 0.15);
+  --plan-note-bg: rgba(0, 212, 255, 0.05);
+  --stat-bg: rgba(255, 255, 255, 0.02);
+  --workout-bg: rgba(0, 212, 255, 0.04);
+  --meal-bg: rgba(0, 212, 255, 0.03);
+  --avatar-bg: rgba(0, 212, 255, 0.12);
+  --bubble-bg: rgba(0, 212, 255, 0.1);
+  --source-bg: rgba(255, 255, 255, 0.02);
+}
+[data-theme="light"] {
+  --bg-body: #f0f4f8;
+  --text-primary: #1a202c;
+  --gray: #4a5568;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --result-bg: rgba(0, 212, 255, 0.06);
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --border-color: rgba(0, 0, 0, 0.08);
+  --disclaimer-bg: rgba(255, 68, 68, 0.08);
+  --disclaimer-border: rgba(255, 68, 68, 0.2);
+  --plan-note-bg: rgba(0, 212, 255, 0.06);
+  --stat-bg: rgba(0, 0, 0, 0.03);
+  --workout-bg: rgba(0, 0, 0, 0.03);
+  --meal-bg: rgba(0, 0, 0, 0.03);
+  --avatar-bg: rgba(0, 212, 255, 0.15);
+  --bubble-bg: rgba(0, 212, 255, 0.08);
+  --source-bg: rgba(0, 0, 0, 0.03);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-body);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+button { font-family: inherit; }
+
+.bg-animation { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.bg-circle { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.06; animation: float 20s ease-in-out infinite; }
+[data-theme="light"] .bg-circle { opacity: 0.08; }
+.circle1 { width: 700px; height: 700px; background: var(--primary); top: -200px; right: -200px; }
+.circle2 { width: 600px; height: 600px; background: var(--secondary); bottom: -200px; left: -200px; animation-delay: -5s; }
+.circle3 { width: 500px; height: 500px; background: var(--primary); top: 50%; left: 50%; transform: translate(-50%, -50%); animation: float2 15s ease-in-out infinite; opacity: 0.04; }
+.circle4 { width: 400px; height: 400px; background: var(--accent); top: 20%; right: 10%; animation: float3 18s ease-in-out infinite; opacity: 0.05; }
+.circle5 { width: 450px; height: 450px; background: var(--primary-light); bottom: 10%; left: 15%; animation: float4 22s ease-in-out infinite; opacity: 0.04; }
+.circle6 { width: 300px; height: 300px; background: var(--secondary); top: 60%; right: 30%; animation: float5 25s ease-in-out infinite; opacity: 0.05; }
+@keyframes float { 0%, 100% { transform: translate(0, 0) scale(1); } 25% { transform: translate(60px, 60px) scale(1.1); } 50% { transform: translate(0, 120px) scale(0.9); } 75% { transform: translate(-60px, 60px) scale(1.05); } }
+@keyframes float2 { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.3); } }
+@keyframes float3 { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 33% { transform: translate(40px, -40px) rotate(120deg); } 66% { transform: translate(-30px, 30px) rotate(240deg); } }
+@keyframes float4 { 0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); } 50% { transform: translate(-50px, -50px) scale(1.3) rotate(180deg); } }
+@keyframes float5 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, -30px) scale(1.2); } }
+
+.particles { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.particle { position: absolute; width: 3px; height: 3px; background: rgba(0, 212, 255, 0.15); border-radius: 50%; animation: particleFloat 15s linear infinite; }
+.particle:nth-child(odd) { background: rgba(0, 180, 216, 0.12); width: 2px; height: 2px; }
+.particle:nth-child(3n) { background: rgba(67, 97, 238, 0.12); width: 4px; height: 4px; }
+@keyframes particleFloat { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 50% { opacity: 0.5; transform: translateY(50vh) scale(1); } 100% { transform: translateY(-100vh) scale(0); opacity: 0; } }
+
+/* NAV */
+.nav-container { position: sticky; top: 0; z-index: 1000; background: var(--nav-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-bottom: 1px solid var(--border-color); padding: 12px 0; animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.nav-content { max-width: 1400px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+.logo-wrapper { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.logo-wrapper:hover .nav-logo { transform: rotate(360deg) scale(1.1); }
+.nav-logo { font-size: 2.2rem; font-family: 'Clash Display', sans-serif; font-weight: 700; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE, #00D4FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); background-size: 300% 300%; animation: gradientShift 4s ease infinite; }
+@keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.nav-logo-small { font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, #00D4FF, #00E5FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; }
+.logo-badge { background: rgba(0, 212, 255, 0.15); padding: 2px 10px; border-radius: 20px; font-size: 0.55rem; font-weight: 600; color: var(--primary-light); border: 1px solid rgba(0, 212, 255, 0.2); animation: badgePulse 2s ease infinite; }
+@keyframes badgePulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+.menu-toggle, .theme-toggle { width: 48px; height: 48px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; color: var(--text-primary); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.menu-toggle { margin-left: 8px; }
+.menu-toggle:hover, .theme-toggle:hover { background: rgba(0, 212, 255, 0.15); transform: scale(1.05); border-color: var(--primary); }
+.menu-toggle.active { background: rgba(0, 212, 255, 0.2); transform: rotate(90deg); }
+.nav-actions { display: flex; align-items: center; gap: 6px; }
+
+/* DRAWER */
+.drawer-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); opacity: 0; pointer-events: none; transition: opacity 0.35s ease; z-index: 1001; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.drawer-backdrop.show { opacity: 1; pointer-events: auto; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 400px; max-width: 90vw; background: #0a0a0a; border-left: 1px solid var(--border-color); transform: translateX(100%); transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1002; display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(0, 0, 0, 0.7); }
+[data-theme="light"] .drawer { background: #f0f4f8; }
+.drawer.open { transform: translateX(0); }
+.drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; border-bottom: 1px solid var(--border-color); background: linear-gradient(180deg, rgba(0, 212, 255, 0.06), transparent); flex-shrink: 0; }
+.drawer-title { font-size: 1.1rem; font-weight: 800; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; }
+.drawer-close { width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); color: var(--gray); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.drawer-close:hover { background: rgba(255, 68, 68, 0.15); color: #FF4444; border-color: rgba(255, 68, 68, 0.3); transform: rotate(90deg); }
+.drawer-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.drawer-body::-webkit-scrollbar { width: 6px; }
+.drawer-body::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.35); border-radius: 6px; }
+.drawer-item { padding: 14px 18px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; color: var(--gray); font-size: 0.92rem; font-weight: 600; cursor: pointer; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; gap: 12px; text-align: left; font-family: inherit; white-space: nowrap; }
+.drawer-item .item-icon { font-size: 1.1rem; }
+.drawer-item:hover { color: var(--text-primary); background: rgba(0, 212, 255, 0.1); border-color: var(--primary); transform: translateX(-4px); }
+.drawer-item.active { color: var(--text-primary); background: linear-gradient(135deg, rgba(0, 212, 255, 0.18), rgba(0, 180, 216, 0.08)); border-color: rgba(0, 212, 255, 0.35); }
+
+/* MAIN */
+.main-container { position: relative; z-index: 10; max-width: 1400px; margin: 0 auto; padding: 20px; }
+.page { display: none; animation: pageEnter 0.7s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.page.active { display: block; }
+@keyframes pageEnter { 0% { opacity: 0; transform: scale(0.96) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+/* HOME */
+.home-page { min-height: calc(100vh - 100px); display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px 0; }
+.hero-section { width: 100%; }
+.main-logo { font-size: 10rem; font-family: 'Clash Display', sans-serif; font-weight: 700; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE, #00D4FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 5px; animation: logoFloat 4s ease-in-out infinite, gradientShift 6s ease infinite; background-size: 400% 400%; display: inline-block; filter: drop-shadow(0 0 50px rgba(0, 212, 255, 0.25)); }
+@keyframes logoFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-25px) scale(1.03); } }
+.main-title { font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, var(--text-primary), #00D4FF, #4361EE, var(--text-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px; letter-spacing: 3px; background-size: 300% auto; animation: titleGlow 3s ease infinite; }
+@keyframes titleGlow { 0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.2)); } 50% { filter: drop-shadow(0 0 50px rgba(0, 212, 255, 0.4)); } }
+.main-tagline { font-size: 1.1rem; color: var(--gray); letter-spacing: 6px; text-transform: uppercase; margin-bottom: 50px; position: relative; display: inline-block; font-weight: 300; }
+.main-tagline::before, .main-tagline::after { content: ''; position: absolute; width: 40px; height: 2px; background: linear-gradient(90deg, transparent, var(--primary)); top: 50%; animation: lineExpand 3s ease infinite; }
+.main-tagline::before { left: -55px; background: linear-gradient(90deg, transparent, var(--primary)); }
+.main-tagline::after { right: -55px; background: linear-gradient(90deg, var(--primary), transparent); }
+@keyframes lineExpand { 0%, 100% { width: 40px; opacity: 0.3; } 50% { width: 60px; opacity: 1; } }
+.tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 40px; }
+@media (min-width: 768px) { .tool-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .tool-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 480px) { .tool-grid { grid-template-columns: 1fr; } }
+.tool-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 28px; padding: 32px 24px; cursor: pointer; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: relative; overflow: hidden; text-align: left; }
+.tool-card::before { content: ''; position: absolute; top: var(--y); left: var(--x); transform: translate(-50%, -50%); width: 0; height: 0; border-radius: 50%; background: radial-gradient(circle, rgba(0, 212, 255, 0.15) 0%, transparent 70%); transition: width 0.8s, height 0.8s; pointer-events: none; }
+.tool-card:hover::before { width: 600px; height: 600px; }
+.tool-card:hover { transform: translateY(-12px) scale(1.02); background: rgba(0, 212, 255, 0.05); border-color: var(--primary); box-shadow: 0 30px 60px rgba(0, 212, 255, 0.15); }
+.card-icon { font-size: 2.8rem; margin-bottom: 16px; display: inline-block; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.tool-card:hover .card-icon { transform: scale(1.15) rotate(-5deg); }
+.tool-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+.tool-card p { color: var(--gray); font-size: 0.9rem; line-height: 1.6; }
+.tool-card .card-tag { display: inline-block; margin-top: 12px; padding: 4px 12px; background: rgba(0, 212, 255, 0.12); border-radius: 20px; font-size: 0.65rem; color: var(--primary-light); font-weight: 600; }
+
+/* CALC */
+.calculator-container { max-width: 1200px; margin: 20px auto; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 36px; padding: 40px 32px; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: var(--card-shadow); position: relative; overflow: hidden; }
+.calculator-header { text-align: center; margin-bottom: 35px; }
+.calculator-header h2 { font-size: 2.2rem; font-weight: 800; font-family: 'Clash Display', sans-serif; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 6px; background-size: 200% auto; animation: headerShimmer 4s ease infinite; }
+@keyframes headerShimmer { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
+.calculator-header p { color: var(--gray); font-size: 0.95rem; }
+.calculator-grid { display: grid; grid-template-columns: 1fr; gap: 35px; }
+@media (min-width: 900px) { .calculator-grid { grid-template-columns: 1fr 1fr; } }
+
+.input-group { margin-bottom: 25px; }
+.input-label { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: var(--primary-light); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.input-wrapper { display: flex; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; transition: all 0.4s; }
+.input-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.08); }
+.input-wrapper input, .input-wrapper select { flex: 1; background: transparent; border: none; padding: 16px 18px; color: var(--text-primary); font-size: 1rem; outline: none; font-family: inherit; }
+.input-unit { background: rgba(0, 212, 255, 0.08); padding: 16px 22px; color: var(--primary); font-weight: 600; border-left: 1px solid var(--border-color); font-size: 0.85rem; }
+.unit-switch { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.unit-btn { flex: 1; min-width: 60px; padding: 10px 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; color: var(--gray); font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); text-align: center; font-family: inherit; }
+.unit-btn:hover { color: var(--text-primary); transform: translateY(-2px); border-color: var(--primary); }
+.unit-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #000; border-color: transparent; box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3); }
+[data-theme="light"] .unit-btn.active { color: #fff; }
+.range-slider { width: 100%; padding: 8px 0; }
+.range-slider input { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.06); border-radius: 10px; outline: none; -webkit-appearance: none; }
+[data-theme="light"] .range-slider input { background: rgba(0, 0, 0, 0.1); }
+.range-slider input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; cursor: pointer; border: 2px solid var(--bg-body); box-shadow: 0 0 30px rgba(0, 212, 255, 0.3); }
+.ft-helper-text { font-size: 0.65rem; color: var(--gray); opacity: 0.6; margin-top: 4px; text-align: right; font-style: italic; }
+
+.result-section { background: var(--result-bg); border: 1px solid rgba(0, 212, 255, 0.12); border-radius: 30px; padding: 35px 25px; text-align: center; transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.result-section:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1); }
+.result-value { font-size: 4rem; font-weight: 800; font-family: 'Clash Display', sans-serif; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 8px; background-size: 200% auto; animation: resultGlow 3s ease infinite; }
+@keyframes resultGlow { 0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.15)); } 50% { filter: drop-shadow(0 0 50px rgba(0, 212, 255, 0.3)); } }
+.result-label { color: var(--gray); font-size: 0.9rem; letter-spacing: 2px; font-weight: 500; }
+.result-note { margin-top: 18px; padding: 14px; background: rgba(0, 212, 255, 0.05); border-radius: 12px; font-size: 0.85rem; color: var(--gray); line-height: 1.6; text-align: left; }
+
+.calculate-btn { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--primary-dark), var(--secondary)); border: none; border-radius: 20px; color: #000; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; background-size: 200% 200%; animation: btnGradient 4s ease infinite; }
+[data-theme="light"] .calculate-btn { color: #fff; }
+@keyframes btnGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+.calculate-btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3); }
+
+/* DISCLAIMER */
+.page-disclaimer { max-width: 1200px; margin: 0 auto 20px auto; padding: 12px 20px; background: var(--disclaimer-bg); border: 1px solid var(--disclaimer-border); border-radius: 14px; text-align: center; font-size: 0.8rem; color: var(--gray); position: relative; z-index: 10; }
+.page-disclaimer strong { color: var(--primary-light); font-weight: 600; }
+.page-disclaimer i { color: var(--danger); margin-right: 8px; font-style: normal; opacity: 0.7; }
+
+/* FOUNDER */
+.founder-card { max-width: 800px; margin: 20px auto; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 40px; padding: 50px 30px; text-align: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); box-shadow: var(--card-shadow); }
+.founder-card:hover { transform: translateY(-10px) scale(1.01); box-shadow: 0 40px 80px rgba(0, 212, 255, 0.1); }
+.founder-avatar { width: 160px; height: 160px; margin: 0 auto 20px; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE, #00D4FF); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 4.5rem; color: #000; background-size: 300% 300%; animation: gradientShift 4s ease infinite, avatarScale 4s ease-in-out infinite; box-shadow: 0 0 60px rgba(0, 212, 255, 0.2); }
+[data-theme="light"] .founder-avatar { color: #fff; }
+@keyframes avatarScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.founder-name { font-size: 2.8rem; font-weight: 800; font-family: 'Clash Display', sans-serif; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px; background-size: 200% auto; animation: headerShimmer 4s ease infinite; }
+.founder-quote { font-size: 1.2rem; font-style: italic; color: var(--primary-light); margin: 20px 0; padding: 20px; background: rgba(0, 212, 255, 0.05); border-radius: 20px; border-left: 4px solid var(--primary); }
+.founder-bio { font-size: 1.05rem; line-height: 1.9; color: var(--gray); margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+.founder-bio strong { color: var(--text-primary); }
+.founder-stats { display: flex; justify-content: center; gap: 50px; margin-top: 30px; flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat-value { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, #00D4FF, #00E5FF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: block; }
+.stat-label { color: var(--gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* WORKOUT CARDS */
+.workout-plan-container { max-height: 500px; overflow-y: auto; padding-right: 10px; }
+.workout-plan-container::-webkit-scrollbar { width: 6px; }
+.workout-plan-container::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+.workout-day { background: var(--workout-bg); border-radius: 16px; padding: 18px; margin-bottom: 15px; border-left: 3px solid var(--primary); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.workout-day:hover { background: rgba(0, 212, 255, 0.08); transform: translateX(5px); }
+.workout-day h5 { color: var(--primary-light); margin-bottom: 12px; font-size: 1rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.workout-day .workout-type { background: rgba(0, 212, 255, 0.15); padding: 2px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; color: var(--primary-light); }
+.workout-day ul { list-style: none; }
+.workout-day li { margin-bottom: 8px; color: var(--gray); font-size: 0.85rem; display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 8px; }
+.workout-day li:hover { color: var(--text-primary); background: rgba(0, 212, 255, 0.03); }
+.workout-day li i { color: var(--success); font-size: 0.7rem; width: 18px; text-align: center; }
+.workout-day .exercise-detail { color: var(--gray); font-size: 0.75rem; opacity: 0.7; margin-left: auto; }
+
+/* STATS */
+.fitness-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
+.fitness-stat-item { background: var(--stat-bg); border-radius: 12px; padding: 14px 8px; text-align: center; }
+.fitness-stat-item .stat-number { font-size: 1.5rem; font-weight: 700; color: var(--primary-light); display: block; }
+.fitness-stat-item .stat-label { font-size: 0.65rem; color: var(--gray); text-transform: uppercase; }
+
+.plan-note { background: var(--plan-note-bg); border-radius: 12px; padding: 15px; margin-top: 15px; border-left: 3px solid var(--warning); font-size: 0.85rem; color: var(--gray); text-align: left; }
+.plan-note i { color: var(--warning); margin-right: 8px; }
+
+/* AI AVATAR */
+.ai-avatar { text-align: center; margin-bottom: 30px; }
+.avatar-container { position: relative; width: 110px; height: 110px; margin: 0 auto; background: var(--avatar-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(0, 212, 255, 0.2); }
+.avatar-icon { font-size: 3.2rem; color: var(--primary); }
+.ai-speech-bubble { background: var(--bubble-bg); backdrop-filter: blur(12px); border-radius: 20px; padding: 14px 22px; margin-top: 18px; display: inline-block; border: 1px solid rgba(0, 212, 255, 0.15); max-width: 280px; }
+.ai-speech-bubble p { color: var(--text-primary); font-size: 0.85rem; margin: 0; font-weight: 500; }
+
+.ai-assessment { background: rgba(0, 212, 255, 0.05); border-radius: 16px; padding: 18px; margin-top: 15px; border-left: 3px solid var(--primary); text-align: left; }
+.ai-assessment h5 { color: var(--primary-light); margin-bottom: 8px; font-size: 0.9rem; }
+.ai-assessment p { font-size: 0.85rem; line-height: 1.6; color: var(--gray); }
+.progress-bar { height: 6px; background: rgba(255,255,255,0.04); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+[data-theme="light"] .progress-bar { background: rgba(0,0,0,0.06); }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent)); border-radius: 3px; transition: width 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+
+.severity-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; margin-top: 10px; }
+.severity-mild { background: rgba(0, 212, 255, 0.15); color: #00D4FF; }
+.severity-moderate { background: rgba(67, 97, 238, 0.15); color: #4361EE; }
+.severity-severe { background: rgba(255, 68, 68, 0.15); color: #FF4444; }
+
+/* EMPTY */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 28px 20px; margin: 10px 0; border: 2px dashed rgba(0, 212, 255, 0.25); border-radius: 18px; color: var(--gray); font-size: 0.85rem; letter-spacing: 0.5px; background: rgba(0, 212, 255, 0.02); }
+.empty-state i { font-size: 1.8rem; margin-bottom: 10px; color: var(--primary); opacity: 0.5; }
+
+/* SLEEP CYCLES */
+.sleep-cycles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 10px; }
+.sleep-cycle-option { background: rgba(0, 212, 255, 0.06); border: 1px solid rgba(0, 212, 255, 0.18); border-radius: 12px; padding: 12px 10px; text-align: center; transition: all 0.3s; }
+.sleep-cycle-option:hover { background: rgba(0, 212, 255, 0.12); transform: translateY(-3px); border-color: var(--primary); }
+.sleep-cycle-time { display: block; font-family: 'Clash Display', sans-serif; font-size: 1.35rem; font-weight: 800; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; margin-bottom: 4px; }
+.sleep-cycle-meta { display: block; font-size: 0.68rem; color: var(--gray); letter-spacing: 0.4px; text-transform: uppercase; font-weight: 600; }
+
+/* SOURCE */
+.source-link-container { margin-top: 15px; text-align: center; font-size: 0.7rem; opacity: 0.6; }
+.tiny-source-link { color: var(--gray); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; background: var(--source-bg); }
+
+/* MACRO RINGS */
+.macro-rings-wrapper { display: flex; flex-direction: column; align-items: center; gap: 20px; margin: 20px 0; padding: 20px 0; }
+.rings-container { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+.rings-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: rgba(255, 255, 255, 0.06); stroke-width: 14; }
+[data-theme="light"] .ring-track { stroke: rgba(0, 0, 0, 0.06); }
+.ring { fill: none; stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.ring-protein { stroke: #00D4FF; }
+.ring-carbs { stroke: #00E5FF; }
+.ring-fats { stroke: #4361EE; }
+.rings-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; }
+.rings-center span { font-family: 'Clash Display', sans-serif; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #00D4FF, #00E5FF, #4361EE); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+.rings-center small { font-size: 0.65rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+.rings-legend { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; font-size: 0.8rem; color: var(--gray); }
+.rings-legend .legend-item { display: flex; align-items: center; gap: 6px; }
+.rings-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot-protein { background: #00D4FF; }
+.dot-carbs { background: #00E5FF; }
+.dot-fats { background: #4361EE; }
+.rings-legend b { color: var(--text-primary); font-weight: 700; margin-left: 4px; }
+
+/* COPY */
+.copy-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; margin-top: 12px; background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.25); border-radius: 12px; color: var(--primary-light); font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+.copy-btn:hover { background: rgba(0, 212, 255, 0.15); transform: translateY(-2px); }
+.copy-btn.copied { background: rgba(0, 220, 130, 0.18); border-color: rgba(0, 220, 130, 0.5); color: #00DC82; }
+
+/* CHAT FAB */
+.chat-fab { position: fixed; bottom: 24px; right: 24px; width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; color: #000; font-size: 1.6rem; cursor: pointer; box-shadow: 0 12px 40px rgba(0, 212, 255, 0.4); z-index: 998; display: none; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); animation: fabPulse 3s ease-in-out infinite; }
+.chat-fab.show { display: flex; }
+.chat-fab:hover { transform: scale(1.1) rotate(8deg); }
+@keyframes fabPulse { 0%, 100% { box-shadow: 0 12px 40px rgba(0, 212, 255, 0.4); } 50% { box-shadow: 0 12px 40px rgba(0, 212, 255, 0.5), 0 0 0 14px rgba(0, 212, 255, 0); } }
+
+/* CHAT PANEL */
+.chat-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 460px; background: #0a0a0a; border-left: 1px solid var(--border-color); transform: translateX(100%); transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 1005; display: flex; flex-direction: column; box-shadow: -20px 0 60px rgba(0, 0, 0, 0.7); }
+[data-theme="light"] .chat-panel { background: #f0f4f8; }
+.chat-panel.open { transform: translateX(0); }
+.chat-head { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, rgba(0, 212, 255, 0.06), transparent); flex-shrink: 0; }
+.chat-head-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; color: #000; font-size: 1.2rem; position: relative; flex-shrink: 0; }
+.chat-head-avatar .status-ring { position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; border-radius: 50%; background: #00DC82; border: 3px solid #0a0a0a; }
+[data-theme="light"] .chat-head-avatar .status-ring { border-color: #f0f4f8; }
+.chat-head-info { flex: 1; min-width: 0; }
+.chat-head-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-head-status { font-size: 0.72rem; color: #00DC82; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+.chat-close-btn { width: 38px; height: 38px; border-radius: 12px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); color: var(--gray); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+.chat-close-btn:hover { background: rgba(255, 68, 68, 0.15); color: #FF4444; transform: rotate(90deg); }
+.context-pill { margin: 10px 16px 0; padding: 8px 14px; background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 14px; font-size: 0.72rem; color: var(--primary-light); display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.context-pill .ctx-label { color: var(--gray); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 16px 18px 8px; display: flex; flex-direction: column; gap: 12px; min-height: 100px; }
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 10px; }
+.chat-bubble { max-width: 82%; padding: 12px 16px; border-radius: 18px; font-size: 0.86rem; line-height: 1.55; word-wrap: break-word; white-space: pre-wrap; animation: bubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes bubbleIn { 0% { opacity: 0; transform: translateY(12px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+.chat-bubble.bot { align-self: flex-start; background: rgba(255, 255, 255, 0.05); border-bottom-left-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.06); }
+[data-theme="light"] .chat-bubble.bot { background: rgba(255, 255, 255, 0.9); border-color: rgba(0, 0, 0, 0.06); }
+.chat-bubble.user { align-self: flex-end; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #000; border-bottom-right-radius: 6px; font-weight: 500; }
+[data-theme="light"] .chat-bubble.user { color: #fff; }
+.typing-indicator { padding: 0 22px 12px; display: none; align-items: center; gap: 8px; color: var(--primary); font-size: 0.78rem; flex-shrink: 0; }
+.typing-indicator.show { display: flex; }
+.typing-dots { display: inline-flex; gap: 4px; }
+.typing-dots span { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); animation: typingBounce 1.4s ease-in-out infinite; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+.chat-chips-wrap { padding: 12px 16px 16px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; max-height: 55vh; overflow-y: auto; background: rgba(0, 0, 0, 0.2); }
+[data-theme="light"] .chat-chips-wrap { background: rgba(0, 0, 0, 0.02); }
+.chat-chips-wrap::-webkit-scrollbar { width: 6px; }
+.chat-chips-wrap::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 10px; }
+.chat-chips-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray); font-weight: 700; margin-bottom: 2px; position: sticky; top: 0; background: inherit; padding-bottom: 4px; z-index: 1; }
+.chip { width: 100%; padding: 12px 14px; background: rgba(0, 212, 255, 0.06); border: 1.5px solid rgba(0, 212, 255, 0.22); border-radius: 12px; color: var(--primary); font-size: 0.82rem; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.25s; line-height: 1.4; font-family: inherit; }
+.chip:hover:not(:disabled) { background: rgba(0, 212, 255, 0.18); transform: translateX(4px); border-color: var(--primary); }
+.chip:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* PWA TOAST */
+.pwa-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); background: var(--card-bg); border: 1px solid var(--primary); border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2); z-index: 9999; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: calc(100% - 40px); }
+.pwa-toast.show { transform: translateX(-50%) translateY(0); }
+.pwa-toast-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #00D4FF, #4361EE); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 800; font-size: 1.2rem; flex-shrink: 0; }
+.pwa-toast-text { font-size: 0.85rem; line-height: 1.4; }
+.pwa-toast-text strong { color: var(--primary-light); display: block; }
+.pwa-toast-text span { color: var(--gray); font-size: 0.75rem; }
+.pwa-toast button { background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; border-radius: 10px; color: #000; font-weight: 700; padding: 8px 14px; font-size: 0.75rem; cursor: pointer; font-family: inherit; }
+.pwa-toast button.close-btn { background: transparent; color: var(--gray); padding: 4px 8px; font-size: 0.9rem; }
+
+@media (max-width: 768px) {
+  .main-logo { font-size: 6rem; }
+  .main-title { font-size: 2.2rem; }
+  .result-value { font-size: 3rem; }
+  .calculator-container { padding: 24px 16px; }
+  .nav-logo-small { display: none; }
+  .drawer { width: 100vw; max-width: 100vw; }
+  .chat-panel { max-width: 100vw; }
+  .fitness-stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .main-logo { font-size: 4.5rem; }
+  .main-title { font-size: 1.8rem; }
+  .calculator-header h2 { font-size: 1.6rem; }
+  .result-value { font-size: 2.5rem; }
+  .founder-name { font-size: 2rem; }
+  .founder-avatar { width: 120px; height: 120px; font-size: 3rem; }
+  .founder-stats { gap: 30px; }
+  .chat-fab { bottom: 18px; right: 18px; width: 58px; height: 58px; font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-animation">
+  <div class="bg-circle circle1"></div>
+  <div class="bg-circle circle2"></div>
+  <div class="bg-circle circle3"></div>
+  <div class="bg-circle circle4"></div>
+  <div class="bg-circle circle5"></div>
+  <div class="bg-circle circle6"></div>
+</div>
+<div class="particles" id="particles"></div>
+
+<nav class="nav-container">
+  <div class="nav-content">
+    <div class="logo-wrapper" onclick="showPage('home')">
+      <span class="nav-logo">H</span>
+      <span class="nav-logo-small">HEALTHOFY</span>
+      <span class="logo-badge">✦ AI</span>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span id="themeIcon" style="font-style:normal;">🌙</span>
+      </button>
+      <button class="menu-toggle" id="menuToggle" onclick="toggleDrawer()" aria-label="Open menu">☰</button>
+    </div>
+  </div>
+</nav>
+
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer()"></div>
+<aside class="drawer" id="sideDrawer" aria-hidden="true">
+  <div class="drawer-head">
+    <div class="drawer-title">NAVIGATION</div>
+    <button class="drawer-close" onclick="toggleDrawer()" aria-label="Close">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <button class="drawer-item active" data-page="home" onclick="showPage('home')"><span class="item-icon">🏠</span>Home</button>
+    <button class="drawer-item" data-page="hydro" onclick="showPage('hydro')"><span class="item-icon">💧</span>Hydro</button>
+    <button class="drawer-item" data-page="calo" onclick="showPage('calo')"><span class="item-icon">🔥</span>Calo</button>
+    <button class="drawer-item" data-page="stamina" onclick="showPage('stamina')"><span class="item-icon">⚡</span>Stamina</button>
+    <button class="drawer-item" data-page="bmi" onclick="showPage('bmi')"><span class="item-icon">📊</span>BMI</button>
+    <button class="drawer-item" data-page="bp" onclick="showPage('bp')"><span class="item-icon">❤️</span>BP</button>
+    <button class="drawer-item" data-page="sleep" onclick="showPage('sleep')"><span class="item-icon">😴</span>Sleep</button>
+    <button class="drawer-item" data-page="posture" onclick="showPage('posture')"><span class="item-icon">🧘</span>Posture</button>
+    <button class="drawer-item" data-page="recovery" onclick="showPage('recovery')"><span class="item-icon">🩹</span>Recovery</button>
+    <button class="drawer-item" data-page="steps" onclick="showPage('steps')"><span class="item-icon">👣</span>Steps</button>
+    <button class="drawer-item" data-page="nutrition" onclick="showPage('nutrition')"><span class="item-icon">🍽️</span>Nutrition</button>
+    <button class="drawer-item" data-page="fitness" onclick="showPage('fitness')"><span class="item-icon">💪</span>Fitness</button>
+    <button class="drawer-item" data-page="founder" onclick="showPage('founder')"><span class="item-icon">👨‍💻</span>Founder</button>
+  </div>
+</aside>
+
+<main class="main-container" id="main">
+
+  <!-- HOME -->
+  <div id="home" class="page active">
+    <div class="home-page">
+      <div class="hero-section">
+        <div class="main-logo">H</div>
+        <h1 class="main-title">HEALTHOFY</h1>
+        <div class="main-tagline">Track • Smart • Live</div>
+        <div class="tool-grid">
+          <div class="tool-card" onclick="showPage('hydro')"><div class="card-icon">💧</div><h3>HydroFlow</h3><p>Smart hydration tracking with personalized daily water intake</p><span class="card-tag">AI Powered</span></div>
+          <div class="tool-card" onclick="showPage('calo')"><div class="card-icon">🔥</div><h3>CaloFlow</h3><p>Advanced calorie calculator for optimal nutrition balance</p><span class="card-tag">Precision</span></div>
+          <div class="tool-card" onclick="showPage('stamina')"><div class="card-icon">⚡</div><h3>Stamina-X</h3><p>Performance optimization for athletes and fitness enthusiasts</p><span class="card-tag">Pro</span></div>
+          <div class="tool-card" onclick="showPage('bmi')"><div class="card-icon">📊</div><h3>BMI Pro</h3><p>Professional body mass index tracking with visual scale</p><span class="card-tag">Visual</span></div>
+          <div class="tool-card" onclick="showPage('bp')"><div class="card-icon">❤️</div><h3>BP Guide</h3><p>Blood pressure analysis based on age and gender</p><span class="card-tag">Medical</span></div>
+          <div class="tool-card" onclick="showPage('sleep')"><div class="card-icon">😴</div><h3>Sleep Cycle</h3><p>Personalized sleep duration recommendations</p><span class="card-tag">Wellness</span></div>
+          <div class="tool-card" onclick="showPage('posture')"><div class="card-icon">🧘</div><h3>Posture AI</h3><p>AI-powered posture analysis with smart recommendations</p><span class="card-tag">AI</span></div>
+          <div class="tool-card" onclick="showPage('recovery')"><div class="card-icon">🩹</div><h3>Recovery AI</h3><p>Smart injury recovery with spray recommendations</p><span class="card-tag">10 Injuries</span></div>
+          <div class="tool-card" onclick="showPage('steps')"><div class="card-icon">👣</div><h3>Step AI</h3><p>AI-powered daily step recommendations</p><span class="card-tag">AI</span></div>
+          <div class="tool-card" onclick="showPage('nutrition')"><div class="card-icon">🍽️</div><h3>Nutrition AI</h3><p>Personalized meal plans with macro tracking</p><span class="card-tag">Smart Plan</span></div>
+          <div class="tool-card" onclick="showPage('fitness')"><div class="card-icon">💪</div><h3>Fitness AI</h3><p>Personalized workout plans based on your goals</p><span class="card-tag">Smart Plan</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HYDRO -->
+  <div id="hydro" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>💧 HydroFlow</h2><p>Personalized Hydration Calculator</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="hydro-gender"><button class="unit-btn active" data-val="m">Male</button><button class="unit-btn" data-val="f">Female</button></div></div>
+          <div class="input-group">
+            <div class="input-label"><span>Weight</span></div>
+            <div class="input-wrapper"><input type="number" id="hydro-weight" value="70" step="0.1"><span class="input-unit" id="hydro-weight-unit">kg</span></div>
+            <div class="unit-switch" id="hydro-weight-unit-switch"><button class="unit-btn active" data-val="kg">KG</button><button class="unit-btn" data-val="lbs">LBS</button></div>
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Height</span></div>
+            <div class="input-wrapper"><input type="number" id="hydro-height" value="170" step="0.1"><span class="input-unit" id="hydro-height-unit">cm</span></div>
+            <div class="unit-switch" id="hydro-height-unit-switch"><button class="unit-btn active" data-val="cm">CM</button><button class="unit-btn" data-val="ft">FT</button></div>
+            <div class="ft-helper-text" id="hydro-ft-helper" style="display:none;">use the (.) when calculating in feet (FT)</div>
+          </div>
+          <div class="input-group"><div class="input-label"><span>Exercise (min/day)</span></div><div class="range-slider"><input type="range" id="hydro-exercise" min="0" max="180" value="60"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="hydro-exercise-val">60 min</div></div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="range-slider"><input type="range" id="hydro-age" min="1" max="100" value="30"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="hydro-age-val">30 years</div></div>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="hydro-result">2.5</div>
+          <div class="result-label">Liters / Day</div>
+          <div class="result-note">Based on weight, height, exercise, age and gender.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALO -->
+  <div id="calo" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>🔥 CaloFlow</h2><p>Advanced Calorie Calculator</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="calo-gender"><button class="unit-btn active" data-val="male">Male</button><button class="unit-btn" data-val="female">Female</button></div></div>
+          <div class="input-group">
+            <div class="input-label"><span>Weight</span></div>
+            <div class="input-wrapper"><input type="number" id="calo-weight" value="70" step="0.1"><span class="input-unit" id="calo-weight-unit">kg</span></div>
+            <div class="unit-switch" id="calo-weight-unit-switch"><button class="unit-btn active" data-val="kg">KG</button><button class="unit-btn" data-val="lbs">LBS</button></div>
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Height</span></div>
+            <div class="input-wrapper"><input type="number" id="calo-height" value="170" step="0.1"><span class="input-unit" id="calo-height-unit">cm</span></div>
+            <div class="unit-switch" id="calo-height-unit-switch"><button class="unit-btn active" data-val="cm">CM</button><button class="unit-btn" data-val="ft">FT</button></div>
+            <div class="ft-helper-text" id="calo-ft-helper" style="display:none;">use the (.) when calculating in feet (FT)</div>
+          </div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="range-slider"><input type="range" id="calo-age" min="1" max="100" value="30"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="calo-age-val">30 years</div></div>
+          <div class="input-group"><div class="input-label"><span>Activity Level</span></div><div class="unit-switch" id="calo-activity"><button class="unit-btn" data-val="sedentary">Sedentary</button><button class="unit-btn" data-val="light">Light</button><button class="unit-btn active" data-val="moderate">Moderate</button><button class="unit-btn" data-val="active">Active</button><button class="unit-btn" data-val="very">Very</button></div></div>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="calo-result">2200</div>
+          <div class="result-label">Maintain Calories</div>
+          <div class="result-note">Maintain: <b id="calo-maintain">2200</b> kcal<br>Lose weight: <b id="calo-lose">1700</b> kcal<br><br>Uses Mifflin-St Jeor BMR formula.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAMINA -->
+  <div id="stamina" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>⚡ Stamina-X</h2><p>1km Run Time Predictor</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="stamina-gender"><button class="unit-btn active" data-val="male">Male</button><button class="unit-btn" data-val="female">Female</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="input-wrapper"><input type="number" id="stamina-age" value="25"><span class="input-unit">years</span></div></div>
+          <div class="input-group">
+            <div class="input-label"><span>Weight</span></div>
+            <div class="input-wrapper"><input type="number" id="stamina-weight" value="70" step="0.1"><span class="input-unit" id="stamina-weight-unit">kg</span></div>
+            <div class="unit-switch" id="stamina-weight-unit-switch"><button class="unit-btn active" data-val="kg">KG</button><button class="unit-btn" data-val="lbs">LBS</button></div>
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Height</span></div>
+            <div class="input-wrapper"><input type="number" id="stamina-height" value="170" step="0.1"><span class="input-unit" id="stamina-height-unit">cm</span></div>
+            <div class="unit-switch" id="stamina-height-unit-switch"><button class="unit-btn active" data-val="cm">CM</button><button class="unit-btn" data-val="ft">FT</button></div>
+            <div class="ft-helper-text" id="stamina-ft-helper" style="display:none;">use the (.) when calculating in feet (FT)</div>
+          </div>
+          <button class="calculate-btn" onclick="calculateStamina()">⚡ Calculate Stamina</button>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="stamina-result">--</div>
+          <div class="result-label">Recommended 1km Time</div>
+          <div class="result-note">Estimated based on age, gender, weight and BMI.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BMI -->
+  <div id="bmi" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>📊 BMI Pro</h2><p>Body Mass Index Calculator</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="input-group">
+            <div class="input-label"><span>Weight</span></div>
+            <div class="input-wrapper"><input type="number" id="bmi-weight" value="70" step="0.1"><span class="input-unit" id="bmi-weight-unit">kg</span></div>
+            <div class="unit-switch" id="bmi-weight-unit-switch"><button class="unit-btn active" data-val="kg">KG</button><button class="unit-btn" data-val="lbs">LBS</button></div>
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Height</span></div>
+            <div class="input-wrapper"><input type="number" id="bmi-height" value="170" step="0.1"><span class="input-unit" id="bmi-height-unit">cm</span></div>
+            <div class="unit-switch" id="bmi-height-unit-switch"><button class="unit-btn active" data-val="cm">CM</button><button class="unit-btn" data-val="ft">FT</button></div>
+            <div class="ft-helper-text" id="bmi-ft-helper" style="display:none;">use the (.) when calculating in feet (FT)</div>
+          </div>
+          <button class="calculate-btn" onclick="calculateBMI()">📊 Calculate BMI</button>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="bmi-result">24.2</div>
+          <div class="result-label" id="bmi-category">Normal Weight</div>
+          <div class="result-note">Healthy BMI range: 18.5 – 24.9</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BP -->
+  <div id="bp" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>❤️ BP Guide</h2><p>Recommended Blood Pressure</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="bp-gender"><button class="unit-btn active" data-val="male">Male</button><button class="unit-btn" data-val="female">Female</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="input-wrapper"><input type="number" id="bp-age" value="30"><span class="input-unit">years</span></div></div>
+          <button class="calculate-btn" onclick="calculateBP()">❤️ Check BP</button>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="bp-result">115/75</div>
+          <div class="result-label">Recommended BP</div>
+          <div class="result-note">General values based on age and gender.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLEEP -->
+  <div id="sleep" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>😴 Sleep Cycle</h2><p>REM-Aligned Sleep Optimizer</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="input-wrapper"><input type="number" id="sleep-age" value="25"><span class="input-unit">years</span></div></div>
+          <div class="input-group"><div class="input-label"><span>Wake Time</span></div><div class="input-wrapper"><input type="time" id="sleep-wake" value="07:00"></div></div>
+          <button class="calculate-btn" onclick="calculateSleep()">😴 Calculate Optimal Sleep</button>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="sleep-hours">7-9</div>
+          <div class="result-label">Hours per Night</div>
+          <div class="result-note" id="sleep-note">Enter your wake time above and click calculate to see REM-aligned bedtimes.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTURE -->
+  <div id="posture" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>🧘 Posture AI</h2><p>Posture Analysis</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="ai-avatar"><div class="avatar-container"><i class="avatar-icon">🤖</i></div><div class="ai-speech-bubble"><p>🤖 I'll analyze your posture</p></div></div>
+          <div class="input-group"><div class="input-label"><span>Posture Type</span></div><div class="input-wrapper"><select id="posture-type"><option value="forward">Forward Head Posture</option><option value="rounded">Rounded Shoulders</option><option value="anterior">Anterior Pelvic Tilt</option><option value="textneck">Text Neck</option></select></div></div>
+          <div class="input-group"><div class="input-label"><span>Sitting Hours/Day</span></div><div class="range-slider"><input type="range" id="posture-hours" min="0" max="14" value="8"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="posture-hours-val">8 hours</div></div>
+          <button class="calculate-btn" onclick="calculatePosture()">🧘 Analyze Posture</button>
+        </div>
+        <div class="result-section">
+          <div class="result-label">Correction Tips</div>
+          <div class="result-note" id="posture-result">Select your posture type and click analyze.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOVERY -->
+  <div id="recovery" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>🩹 Recovery AI</h2><p>Injury Recovery Plan</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="ai-avatar"><div class="avatar-container"><i class="avatar-icon">🩺</i></div><div class="ai-speech-bubble"><p>🩺 I'll create a personalized plan</p></div></div>
+          <div class="input-group"><div class="input-label"><span>Injury Type</span></div><div class="input-wrapper"><select id="injury-type"><option value="sprain">Ankle Sprain</option><option value="strain">Muscle Strain</option><option value="knee">Knee Pain</option><option value="back">Lower Back Pain</option><option value="shoulder">Shoulder Injury</option><option value="headache">Headaches & Migraines</option></select></div></div>
+          <div class="input-group"><div class="input-label"><span>Days Since Injury</span></div><div class="range-slider"><input type="range" id="injury-days" min="0" max="30" value="2"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="injury-days-val">2 days</div></div>
+          <div class="input-group"><div class="input-label"><span>Pain Level (1-10)</span></div><div class="range-slider"><input type="range" id="pain-level" min="1" max="10" value="5"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="pain-level-val">5/10</div></div>
+          <button class="calculate-btn" onclick="calculateRecovery()">🩹 Generate Plan</button>
+        </div>
+        <div class="result-section">
+          <div class="ai-assessment" id="recovery-assessment"><h5>📊 Recovery Plan</h5><p>Select your injury details and click generate.</p></div>
+          <div class="posture-tips"><h4>💊 Treatment Plan</h4><ul id="recovery-plan-list"><li>Complete the form to see plan</li></ul></div>
+          <div class="posture-tips"><h4>🧴 Recommended Spray</h4><ul id="spray-list"><li>Complete the form to see sprays</li></ul></div>
+          <button class="copy-btn" id="copy-recovery-btn" onclick="copyPlan('recovery')">📋 Copy Recovery Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div id="steps" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>👣 Step AI</h2><p>Daily Step Recommendations</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="ai-avatar"><div class="avatar-container"><i class="avatar-icon">🏃</i></div><div class="ai-speech-bubble"><p>🏃 Let's calculate your optimal steps</p></div></div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="steps-gender"><button class="unit-btn active" data-val="male">Male</button><button class="unit-btn" data-val="female">Female</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="input-wrapper"><input type="number" id="steps-age" value="30"><span class="input-unit">years</span></div></div>
+          <div class="input-group">
+            <div class="input-label"><span>Weight</span></div>
+            <div class="input-wrapper"><input type="number" id="steps-weight" value="70" step="0.1"><span class="input-unit" id="steps-weight-unit">kg</span></div>
+            <div class="unit-switch" id="steps-weight-unit-switch"><button class="unit-btn active" data-val="kg">KG</button><button class="unit-btn" data-val="lbs">LBS</button></div>
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Height</span></div>
+            <div class="input-wrapper"><input type="number" id="steps-height" value="170" step="0.1"><span class="input-unit" id="steps-height-unit">cm</span></div>
+            <div class="unit-switch" id="steps-height-unit-switch"><button class="unit-btn active" data-val="cm">CM</button><button class="unit-btn" data-val="ft">FT</button></div>
+            <div class="ft-helper-text" id="steps-ft-helper" style="display:none;">use the (.) when calculating in feet (FT)</div>
+          </div>
+          <div class="input-group"><div class="input-label"><span>Fitness Goal</span></div><div class="unit-switch" id="steps-goal"><button class="unit-btn active" data-val="health">Health</button><button class="unit-btn" data-val="weight">Weight Loss</button><button class="unit-btn" data-val="fitness">Fitness</button></div></div>
+          <button class="calculate-btn" onclick="calculateSteps()">👣 Calculate Steps</button>
+        </div>
+        <div class="result-section">
+          <div class="result-value" id="steps-result">7500</div>
+          <div class="result-label">Recommended Steps / Day</div>
+          <div class="ai-assessment"><h5>🤖 AI Recommendation</h5><p id="steps-recommendation">Complete the form to see recommendation.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUTRITION -->
+  <div id="nutrition" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>🍽️ Nutrition AI</h2><p>Personalized Macro & Calorie Plan</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="ai-avatar"><div class="avatar-container"><i class="avatar-icon">🥗</i></div><div class="ai-speech-bubble"><p>🥗 Let's create your nutrition plan</p></div></div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="nutrition-gender"><button class="unit-btn active" data-val="male">Male</button><button class="unit-btn" data-val="female">Female</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="input-wrapper"><input type="number" id="nutrition-age" value="30"><span class="input-unit">years</span></div></div>
+          <div class="input-group">
+            <div class="input-label"><span>Weight</span></div>
+            <div class="input-wrapper"><input type="number" id="nutrition-weight" value="70" step="0.1"><span class="input-unit" id="nutrition-weight-unit">kg</span></div>
+            <div class="unit-switch" id="nutrition-weight-unit-switch"><button class="unit-btn active" data-val="kg">KG</button><button class="unit-btn" data-val="lbs">LBS</button></div>
+          </div>
+          <div class="input-group">
+            <div class="input-label"><span>Height</span></div>
+            <div class="input-wrapper"><input type="number" id="nutrition-height" value="170" step="0.1"><span class="input-unit" id="nutrition-height-unit">cm</span></div>
+            <div class="unit-switch" id="nutrition-height-unit-switch"><button class="unit-btn active" data-val="cm">CM</button><button class="unit-btn" data-val="ft">FT</button></div>
+            <div class="ft-helper-text" id="nutrition-ft-helper" style="display:none;">use the (.) when calculating in feet (FT)</div>
+          </div>
+          <div class="input-group"><div class="input-label"><span>Activity Level</span></div><div class="unit-switch" id="nutrition-activity"><button class="unit-btn" data-val="sedentary">Sedentary</button><button class="unit-btn" data-val="light">Light</button><button class="unit-btn active" data-val="moderate">Moderate</button><button class="unit-btn" data-val="active">Active</button><button class="unit-btn" data-val="very">Very</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Goal</span></div><div class="unit-switch" id="nutrition-goal"><button class="unit-btn active" data-val="lose">Lose</button><button class="unit-btn" data-val="maintain">Maintain</button><button class="unit-btn" data-val="gain">Gain</button></div></div>
+          <button class="calculate-btn" onclick="calculateNutrition()">🍽️ Generate Plan</button>
+        </div>
+        <div class="result-section">
+          <div class="ai-assessment"><h5>📊 Daily Nutrition Summary</h5><p id="nutrition-assessment-text">Complete the form to see your plan.</p></div>
+          <div class="macro-rings-wrapper">
+            <div class="rings-container">
+              <svg class="rings-svg" viewBox="0 0 200 200">
+                <circle class="ring-track" cx="100" cy="100" r="80" />
+                <circle class="ring-track" cx="100" cy="100" r="62" />
+                <circle class="ring-track" cx="100" cy="100" r="44" />
+                <circle class="ring ring-protein" id="ring-protein" cx="100" cy="100" r="80" />
+                <circle class="ring ring-carbs"   id="ring-carbs"   cx="100" cy="100" r="62" />
+                <circle class="ring ring-fats"    id="ring-fats"    cx="100" cy="100" r="44" />
+              </svg>
+              <div class="rings-center"><span id="rings-calories">--</span><small>kcal</small></div>
+            </div>
+            <div class="rings-legend">
+              <div class="legend-item"><span class="dot dot-protein"></span>Protein <b id="legend-protein">--g</b></div>
+              <div class="legend-item"><span class="dot dot-carbs"></span>Carbs <b id="legend-carbs">--g</b></div>
+              <div class="legend-item"><span class="dot dot-fats"></span>Fats <b id="legend-fats">--g</b></div>
+            </div>
+          </div>
+          <div class="result-note" id="nutrition-note-text">Complete the form and click Generate to see your macro targets.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FITNESS -->
+  <div id="fitness" class="page">
+    <div class="page-disclaimer"><i>⚠️</i><strong>Disclaimer:</strong> General recommendations only — consult a doctor before using them.</div>
+    <div class="calculator-container">
+      <div class="calculator-header"><h2>💪 Fitness AI Planner</h2><p>Personalized workout plans based on your goals</p></div>
+      <div class="calculator-grid">
+        <div>
+          <div class="ai-avatar"><div class="avatar-container"><i class="avatar-icon">💪</i></div><div class="ai-speech-bubble"><p>💪 I'll create a custom fitness plan for you</p></div></div>
+          <div class="input-group"><div class="input-label"><span>Gender</span></div><div class="unit-switch" id="fitness-gender"><button class="unit-btn active" data-val="male">Male</button><button class="unit-btn" data-val="female">Female</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Age</span></div><div class="input-wrapper"><input type="number" id="fitness-age" value="25"><span class="input-unit">years</span></div></div>
+          <div class="input-group"><div class="input-label"><span>Fitness Level</span></div><div class="unit-switch" id="fitness-level"><button class="unit-btn active" data-val="Beginner">Beginner</button><button class="unit-btn" data-val="Intermediate">Intermediate</button><button class="unit-btn" data-val="Advanced">Advanced</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Goal</span></div><div class="unit-switch" id="fitness-goal"><button class="unit-btn active" data-val="Strength">💪 Strength</button><button class="unit-btn" data-val="Cardio">🏃 Cardio</button><button class="unit-btn" data-val="Hybrid">⚡ Hybrid</button><button class="unit-btn" data-val="Flexibility">🧘 Flexibility</button></div></div>
+          <div class="input-group"><div class="input-label"><span>Days per Week</span></div><div class="range-slider"><input type="range" id="fitness-days" min="1" max="6" value="3"></div><div style="text-align:right;color:var(--primary);font-weight:600;" id="fitness-days-val">3 days/week</div></div>
+          <button class="calculate-btn" onclick="calculateFitness()">💪 Generate AI Fitness Plan</button>
+        </div>
+        <div class="result-section">
+          <div class="result-label" id="fitness-result-label">Weekly Workout Schedule</div>
+          <div class="ai-assessment"><h5>🏆 Personalized Assessment</h5><p id="fitness-assessment-text">Complete the form to see your plan.</p></div>
+          <div class="fitness-stats" id="fitness-stats">
+            <div class="fitness-stat-item"><span class="stat-number" id="stat-days">-</span><span class="stat-label">Days/Week</span></div>
+            <div class="fitness-stat-item"><span class="stat-number" id="stat-exercises">-</span><span class="stat-label">Exercises</span></div>
+            <div class="fitness-stat-item"><span class="stat-number" id="stat-duration">-</span><span class="stat-label">Avg Time</span></div>
+            <div class="fitness-stat-item"><span class="stat-number" id="stat-level">-</span><span class="stat-label">Level</span></div>
+          </div>
+          <div class="workout-plan-container" id="workout-plan-container">
+            <div class="empty-state"><i>⏳</i><span>Pending Biometric Metrics...</span></div>
+          </div>
+          <div class="plan-note" id="plan-note"><i>💡</i><span id="plan-note-text">Complete the form and click Generate.</span></div>
+          <button class="copy-btn" id="copy-fitness-btn" onclick="copyPlan('fitness')">📋 Copy Workout Plan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOUNDER -->
+  <div id="founder" class="page">
+    <div class="founder-card">
+      <div class="founder-avatar">🚀</div>
+      <h1 class="founder-name">HIRENSAI</h1>
+      <div class="founder-quote"><i>"Building the future of wellness, one calculation at a time."</i></div>
+      <p class="founder-bio">
+        <strong>About the Founder</strong><br><br>
+        Hiren is a 14-year-old student, entrepreneur, and national-level player with a strong passion for health and technology. As an athlete, he understands the importance of hydration, nutrition, and stamina. This inspired him to create <strong>Healthofy</strong>, a platform designed to help people understand and improve their health through simple and useful tools.
+      </p>
+      <div class="founder-stats">
+        <div class="stat"><span class="stat-value">14</span><span class="stat-label">Years Old</span></div>
+        <div class="stat"><span class="stat-value">2026</span><span class="stat-label">Founded</span></div>
+        <div class="stat"><span class="stat-value">🏆</span><span class="stat-label">National Player</span></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<button class="chat-fab" id="chatFab" onclick="openChat()" aria-label="Open AI chat">💬</button>
+
+<aside class="chat-panel" id="chatPanel" aria-hidden="true">
+  <div class="chat-head">
+    <div class="chat-head-avatar">🤖<span class="status-ring"></span></div>
+    <div class="chat-head-info">
+      <div class="chat-head-title" id="chatTitle">Healthofy AI</div>
+      <div class="chat-head-status">● Online</div>
+    </div>
+    <button class="chat-close-btn" onclick="closeChat()" aria-label="Close">✕</button>
+  </div>
+  <div class="context-pill" id="chatCtx"><span class="ctx-label">📊 Context:</span><span id="contextPillText">—</span></div>
+  <div class="chat-messages" id="chatBody"></div>
+  <div class="typing-indicator" id="chatTyping"><div class="typing-dots"><span></span><span></span><span></span></div><span>AI is thinking</span></div>
+  <div class="chat-chips-wrap">
+    <div class="chat-chips-label">Ask the expert →</div>
+    <div id="chatChips"></div>
+  </div>
+</aside>
+
+<div class="pwa-toast" id="pwaToast">
+  <div class="pwa-toast-icon">H</div>
+  <div class="pwa-toast-text">
+    <strong>Install Healthofy</strong>
+    <span>Add to home screen for offline access</span>
+  </div>
+  <button id="pwaInstallBtn">Install</button>
+  <button class="close-btn" id="pwaDismissBtn">✕</button>
+</div>
+
+<script>
+// =============================================
+// HELPER FUNCTIONS
+// =============================================
+function num(id, fallback) {
+  try { var el = document.getElementById(id); if (!el) return fallback; var v = parseFloat(el.value); return isNaN(v) ? fallback : v; } catch(e) { return fallback; }
+}
+function val(id, fallback) {
+  try { var el = document.getElementById(id); if (!el) return fallback; return el.value || fallback; } catch(e) { return fallback; }
+}
+function toggle(groupId, fallback) {
+  try { var group = document.getElementById(groupId); if (!group) return fallback; var a = group.querySelector('.unit-btn.active'); return a ? a.getAttribute('data-val') : fallback; } catch(e) { return fallback; }
+}
+function cap(s) { if (!s) return ''; return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// Unit state
+var units = {
+  hydro: { weight: 'kg', height: 'cm' },
+  calo: { weight: 'kg', height: 'cm' },
+  stamina: { weight: 'kg', height: 'cm' },
+  bmi: { weight: 'kg', height: 'cm' },
+  steps: { weight: 'kg', height: 'cm' },
+  nutrition: { weight: 'kg', height: 'cm' }
+};
+
+function updateFtHelper() {
+  ['hydro', 'calo', 'stamina', 'bmi', 'steps', 'nutrition'].forEach(function(prefix) {
+    var helper = document.getElementById(prefix + '-ft-helper');
+    if (helper) helper.style.display = units[prefix].height === 'ft' ? 'block' : 'none';
+  });
+}
+
+function setupUnitSwitches() {
+  ['hydro', 'calo', 'stamina', 'bmi', 'steps', 'nutrition'].forEach(function(prefix) {
+    var ws = document.getElementById(prefix + '-weight-unit-switch');
+    if (ws) {
+      ws.querySelectorAll('.unit-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          ws.querySelectorAll('.unit-btn').forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+          units[prefix].weight = this.getAttribute('data-val');
+          var unitEl = document.getElementById(prefix + '-weight-unit');
+          if (unitEl) unitEl.textContent = units[prefix].weight;
+          recalc(prefix);
+        });
+      });
+    }
+    var hs = document.getElementById(prefix + '-height-unit-switch');
+    if (hs) {
+      hs.querySelectorAll('.unit-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          hs.querySelectorAll('.unit-btn').forEach(function(b) { b.classList.remove('active'); });
+          this.classList.add('active');
+          units[prefix].height = this.getAttribute('data-val');
+          var unitEl = document.getElementById(prefix + '-height-unit');
+          if (unitEl) unitEl.textContent = units[prefix].height;
+          updateFtHelper();
+          recalc(prefix);
+        });
+      });
+    }
+  });
+}
+
+function recalc(prefix) {
+  if (prefix === 'hydro') updateHydro();
+  else if (prefix === 'calo') updateCalo();
+  else if (prefix === 'bmi') calculateBMI();
+  else if (prefix === 'stamina') { /* stamina is on button click */ }
+  else if (prefix === 'steps') calculateSteps();
+  else if (prefix === 'nutrition') calculateNutrition();
+}
+
+function toKg(w, unit) { return unit === 'lbs' ? w * 0.453592 : w; }
+function toCm(h, unit) { return unit === 'ft' ? h * 30.48 : h; }
+
+// =============================================
+// SHARED RESPONSES (chat bots)
+// =============================================
+function responseHydrationCommon(i) {
+  var w = i.weight || 70;
+  return '💧 Hydration Basics\n\n• Daily base: ' + (w * 0.033).toFixed(1) + 'L\n• +500-750ml per hour of training\n• +Electrolytes if sweating >1L/h\n• Check urine color — pale yellow = optimal\n\n💡 Dehydration of just 2% drops performance by up to 10%.';
+}
+function responseSleepCommon() {
+  return '😴 Sleep Foundation\n\n• 7-9 hours per night for adults\n• Same wake time daily — even weekends\n• Cool, dark, quiet room (65-68°F / 18-20°C)\n• No caffeine 8-10h before bed\n• No screens 60 min before bed\n\n💡 Sleep is the #1 recovery tool.';
+}
+function responseWarmupCommon() {
+  return '🔥 Warm-Up Protocol\n\n• 5-10 minutes total\n• Light cardio 3-5 min\n• Dynamic stretches\n• Specific warm-up: light sets\n\n💡 Proper warm-up improves performance + cuts injury risk.';
+}
+function responseCoolDownCommon() {
+  return '🧊 Cool-Down Protocol\n\n• 5-10 minutes after training\n• Light cardio: walk 3-5 min\n• Static stretches: hold 30s each\n• Deep breathing\n\n💡 Improves recovery + reduces soreness.';
+}
+function responseDeloadCommon() {
+  return '📉 Deload Week\n\n• Every 4-6 weeks\n• Cut volume by 50%\n• Keep intensity moderate (60-70%)\n\n💡 Skipping deloads = plateaus + injuries.';
+}
+function responseCreatineCommon() {
+  return '💊 Creatine — The Science\n\n• Dose: 3-5g per day\n• Best form: Monohydrate\n• Take anytime\n• Safe for long-term use\n\n💡 The most researched sports supplement.';
+}
+function responseStretchingCommon() {
+  return '🤸 Stretching Guide\n\nDynamic (BEFORE):\n• Leg swings, arm circles\n\nStatic (AFTER):\n• Hold 30-60s\n\n💡 Static before training reduces power.';
+}
+function responseMotivationCommon() {
+  return '🔥 Motivation vs Discipline\n\nMotivation: Comes and goes\nDiscipline: Built through routine\n\n💡 You don\'t need motivation. You need a system.';
+}
+function responsePlateauCommon() {
+  return '📊 Breaking a Plateau\n\nChecklist:\n• Tracking progress?\n• Enough protein?\n• Sleeping 7-9h?\n• Deloaded recently?\n\n💡 Patience beats program-hopping.';
+}
+function responseSupplementsCommon() {
+  return '💊 Supplements\n\nTier 1:\n• Creatine 3-5g/day\n• Vitamin D3\n• Protein powder\n• Caffeine pre-workout\n\nSkip: BCAAs, fat burners.\n\n💡 Supplements = 5%.';
+}
+function responseStressCommon() {
+  return '😰 Stress Management\n\n• 10-min meditation\n• 20-min walk\n• Limit news + social media\n• Journal\n• No screens 60 min before bed\n\n💡 Manage stress and everything gets easier.';
+}
+function responseConsistencyCommon() {
+  return '🎯 Consistency Rules\n\n1. Never miss twice in a row\n2. Do minimum on bad days\n3. Same time, same place\n4. Track your streak\n\n💡 Consistency beats intensity.';
+}
+function responseRestDayCommon() {
+  return '🛌 Rest Days Are Training\n\n• Protein synthesis peaks 24-48h post-workout\n• CNS recovers in 24-72h\n\n💡 If always sore, you\'re damaging, not training.';
+}
+
+// =============================================
+// EXPERT SYSTEM — 25 Q × 9 BOTS
+// =============================================
+var EXPERT_RULES = {
+  fitnessAI: {
+    title: 'Fitness AI Engine',
+    greeting: 'Elite strength coach online. Pick a question below.',
+    questions: [
+      { label: '🏋️ My weekly training split', key: 'schedule' },
+      { label: '📈 How to progress (overload)', key: 'overload' },
+      { label: '⚡ The Big 5 compound lifts', key: 'lifts' },
+      { label: '😴 Recovery rules', key: 'recovery' },
+      { label: '✅ Form checklist', key: 'form' },
+      { label: '⏱️ How long should I train?', key: 'duration' },
+      { label: '🍗 Pre-workout nutrition', key: 'preworkout' },
+      { label: '🔥 How many sets & reps?', key: 'setsreps' },
+      { label: '💤 Best time to train?', key: 'traintime' },
+      { label: '🩹 How to avoid injury?', key: 'injury' },
+      { label: '🔥 Warm-up protocol', key: 'warmup' },
+      { label: '🧊 Cool-down protocol', key: 'cooldown' },
+      { label: '📉 What is a deload week?', key: 'deload' },
+      { label: '💊 Creatine — worth it?', key: 'creatine' },
+      { label: '🤸 Stretching guide', key: 'stretching' },
+      { label: '🔥 Motivation vs discipline', key: 'motivation' },
+      { label: '📊 How to break a plateau?', key: 'plateau' },
+      { label: '💊 Best supplements?', key: 'supplements' },
+      { label: '😰 Stress management', key: 'stress' },
+      { label: '🎯 Consistency rules', key: 'consistency' },
+      { label: '🛌 Are rest days important?', key: 'restday' },
+      { label: '🏃 Cardio for fat loss?', key: 'cardiofat' },
+      { label: '💪 Bodyweight vs weights?', key: 'bodyweight' },
+      { label: '🚫 Overtraining signs', key: 'overtraining' },
+      { label: '📅 How often to increase weight?', key: 'increase' }
+    ],
+    read: function() {
+      return { age: num('fitness-age', 25), gender: toggle('fitness-gender', 'male'), level: toggle('fitness-level', 'beginner'), goal: toggle('fitness-goal', 'strength'), days: num('fitness-days', 3), weight: 70 };
+    },
+    build: function(i, kw) {
+      var lvl = cap(i.level); var gl = cap(i.goal);
+      if (kw === 'schedule') {
+        var splits = {
+          strength: ['Upper Body','Lower Body','Core + Accessory','Push','Pull','Legs'],
+          cardio: ['Steady Zone 2','HIIT Intervals','Tempo Run','Long Distance','Fartlek','Recovery Jog'],
+          hybrid: ['Strength + Cardio','Cardio + Core','Full Body','Upper + HIIT','Lower + Run','Conditioning'],
+          flexibility: ['Upper Stretch','Lower Stretch','Full Flow','Yoga A','Yoga B','Recovery']
+        };
+        var types = splits[i.goal] || splits.strength;
+        var out = '🏋️ ' + lvl + ' ' + gl + ' Plan — ' + i.days + ' Days/Week\n\n';
+        for (var d = 0; d < i.days; d++) out += '• Day ' + (d+1) + ' — ' + types[d % types.length] + '\n';
+        if (i.days < 6) out += '• Rest Days — Active Recovery\n';
+        return out;
+      }
+      if (kw === 'overload') return '📈 Progressive Overload\n\n• Add 2.5kg to upper lifts OR 1 rep per set weekly\n• Track every set\n• Deload every 4-6 weeks\n\n💡 The #1 driver of muscle + strength gains.';
+      if (kw === 'lifts') return '⚡ The Big 5 Compound Lifts\n\n1. Barbell Squat\n2. Deadlift\n3. Bench Press\n4. Overhead Press\n5. Pull-ups / Rows\n\n💡 Compounds recruit the most muscle fibers.';
+      if (kw === 'recovery') return '😴 Recovery Rules for ' + lvl + '\n\n• Sleep 7-9 hours\n• Protein 1.8-2.2g per kg\n• Deload every 4-6 weeks\n• Hydration 30-35ml per kg\n\n💡 Muscle grows during recovery.';
+      if (kw === 'form') return '✅ Form Checklist for ' + gl + '\n\n• Squat: knees track over toes\n• Deadlift: neutral spine\n• Bench: shoulder blades retracted\n• OHP: core tight\n• Rows: pull with elbows\n\n💡 Bad form = injury.';
+      if (kw === 'duration') return '⏱️ Workout Duration\n\n• Beginner: 45-60 min\n• Intermediate: 60-75 min\n• Advanced: 75-90 min\n\n💡 Past 90 min = cortisol spikes.';
+      if (kw === 'preworkout') return '🍗 Pre-Workout Nutrition\n\n• 60-90 min before: Carbs + protein, low fat\n• Hydration: 500ml water 2h before\n\n💡 Skip heavy fats.';
+      if (kw === 'setsreps') return '🔥 Sets & Reps for ' + gl + '\n\n• Strength: 3-5 × 3-6 reps\n• Hypertrophy: 3-4 × 8-12 reps\n• Endurance: 2-3 × 15-20 reps\n\n💡 Rest 60-90s.';
+      if (kw === 'traintime') return '💤 Best Time to Train\n\n• Morning: Higher testosterone\n• Afternoon: Peak strength\n• Evening: Stress relief\n\n💡 Consistency > optimal timing.';
+      if (kw === 'injury') return '🩹 Injury Prevention\n\n• Warm up dynamic\n• Progress load gradually\n• Never train through sharp pain\n• Sleep 7-9 hours\n\n💡 Most gym injuries from ego-lifting.';
+      if (kw === 'warmup') return responseWarmupCommon();
+      if (kw === 'cooldown') return responseCoolDownCommon();
+      if (kw === 'deload') return responseDeloadCommon();
+      if (kw === 'creatine') return responseCreatineCommon();
+      if (kw === 'stretching') return responseStretchingCommon();
+      if (kw === 'motivation') return responseMotivationCommon();
+      if (kw === 'plateau') return responsePlateauCommon();
+      if (kw === 'supplements') return responseSupplementsCommon();
+      if (kw === 'stress') return responseStressCommon();
+      if (kw === 'consistency') return responseConsistencyCommon();
+      if (kw === 'restday') return responseRestDayCommon();
+      if (kw === 'cardiofat') return '🏃 Cardio for Fat Loss\n\n• HIIT: 15-20 min, 2-3×/week\n• LISS: 30-45 min, 3-5×/week\n\n💡 Cardio burns. Strength preserves.';
+      if (kw === 'bodyweight') return '💪 Bodyweight vs Weights\n\nBodyweight: Free, builds endurance\nWeights: Progressive overload\n\n💡 Combine both.';
+      if (kw === 'overtraining') return '🚫 Overtraining Signs\n\n• Persistent fatigue\n• HR elevated 5+ bpm\n• Sleep issues\n• Strength dropping\n\n💡 Overtraining kills progress.';
+      if (kw === 'increase') return '📅 Increase Weight Frequency\n\n• Beginners: Every session\n• Intermediate: Every 1-2 weeks\n• Advanced: Every 3-4 weeks\n\n💡 Form first.';
+      return 'Fitness AI Engine ready.';
+    }
+  },
+  nutritionAI: {
+    title: 'Nutrition Neural Core',
+    greeting: 'Sports dietitian ready. Pick a question below.',
+    questions: [
+      { label: '🥗 My macro targets', key: 'macros' },
+      { label: '🔥 Calorie & TDEE breakdown', key: 'calories' },
+      { label: '🍽️ Meal timing strategy', key: 'meal' },
+      { label: '🥩 Best food sources', key: 'foods' },
+      { label: '💧 Hydration needs', key: 'hydration' },
+      { label: '🥤 Do I need protein shakes?', key: 'shakes' },
+      { label: '🍫 Cheat meals — ok?', key: 'cheat' },
+      { label: '☕ Caffeine & performance', key: 'caffeine' },
+      { label: '🌙 What to eat before bed?', key: 'bedtime' },
+      { label: '🥑 Healthy fats guide', key: 'fats' },
+      { label: '🍞 Carbs — friend or foe?', key: 'carbs' },
+      { label: '🥗 Best pre-workout meal?', key: 'preworkout' },
+      { label: '🍗 Best post-workout meal?', key: 'postworkout' },
+      { label: '🍽️ How many meals per day?', key: 'mealfreq' },
+      { label: '🍺 Alcohol & performance', key: 'alcohol' },
+      { label: '🧂 Salt & sodium needs', key: 'sodium' },
+      { label: '🥦 Best vegetables', key: 'veggies' },
+      { label: '🍎 Best fruits for athletes', key: 'fruits' },
+      { label: '🥜 Nuts & seeds guide', key: 'nuts' },
+      { label: '🍳 Egg nutrition facts', key: 'eggs' },
+      { label: '🥛 Dairy — good or bad?', key: 'dairy' },
+      { label: '🌱 Vegan protein sources', key: 'vegan' },
+      { label: '🍚 Carb timing around workouts', key: 'carbtiming' },
+      { label: '💊 Do I need multivitamins?', key: 'vitamins' },
+      { label: '⚖️ Should I count calories?', key: 'counting' }
+    ],
+    read: function() {
+      return { age: num('nutrition-age', 30), weight: num('nutrition-weight', 70), height: num('nutrition-height', 170), gender: toggle('nutrition-gender', 'male'), activity: toggle('nutrition-activity', 'moderate'), goal: toggle('nutrition-goal', 'lose') };
+    },
+    build: function(i, kw) {
+      var bmr = (i.gender === 'male') ? (10 * i.weight) + (6.25 * i.height) - (5 * i.age) + 5 : (10 * i.weight) + (6.25 * i.height) - (5 * i.age) - 161;
+      var mults = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very: 1.9 };
+      var tdee = Math.round(bmr * (mults[i.activity] || 1.55));
+      var cal = tdee;
+      if (i.goal === 'lose') cal = tdee - 500;
+      else if (i.goal === 'gain') cal = tdee + 300;
+      var minC = (i.gender === 'male') ? 1500 : 1200;
+      cal = Math.max(minC, cal);
+      var lbm = (i.gender === 'male') ? (0.407 * i.weight + 0.267 * i.height - 19.2) : (0.252 * i.weight + 0.473 * i.height - 48.3);
+      var pm = (i.goal === 'lose') ? 2.2 : (i.goal === 'gain') ? 2.0 : 1.8;
+      var protein = Math.max(40, Math.round(lbm * pm));
+      var pCal = protein * 4;
+      if (pCal > cal * 0.4) { pCal = cal * 0.4; protein = Math.round(pCal / 4); }
+      var rem = cal - pCal;
+      var carbs = Math.round((rem * 0.5) / 4);
+      var fats = Math.round((rem * 0.5) / 9);
+
+      if (kw === 'macros') return '🥗 Your Macro Targets\n\n• Calories: ' + cal + ' kcal/day\n• Protein: ' + protein + 'g (' + (protein/i.weight).toFixed(1) + 'g/kg)\n• Carbs: ' + carbs + 'g\n• Fats: ' + fats + 'g\n\n💡 Protein from LBM ~' + Math.round(lbm) + 'kg × ' + pm + 'g/kg.';
+      if (kw === 'calories') return '🔥 Metabolic Breakdown\n\n• BMR: ' + Math.round(bmr) + ' kcal\n• ×' + (mults[i.activity] || 1.55) + '\n• TDEE: ' + tdee + ' kcal\n• Target: ' + cal + ' kcal\n\n💡 Mifflin-St Jeor formula.';
+      if (kw === 'meal') return '🍽️ Meal Timing\n\n• Pre-workout: Carbs + protein\n• Post-workout: 30-40g protein + carbs\n• 3-4 balanced meals\n\n💡 Total intake > timing.';
+      if (kw === 'foods') return '🥩 Best Food Sources\n\n• Protein: Chicken, eggs, fish, Greek yogurt\n• Carbs: Oats, rice, potatoes, quinoa\n• Fats: Olive oil, avocado, nuts\n\n💡 80% whole foods.';
+      if (kw === 'hydration') return responseHydrationCommon(i);
+      if (kw === 'shakes') return '🥤 Protein Shakes\n\n• Convenient post-workout\n• Whey: fast\n• Casein: slow, before bed\n\n💡 20-40g per shake.';
+      if (kw === 'cheat') return '🍫 Cheat Meals\n\n• One meal won\'t ruin progress\n• Plan them\n• After a big workout\n\n💡 90/10 rule.';
+      if (kw === 'caffeine') return '☕ Caffeine\n\n• 3-6mg per kg (60-90 min before)\n• Cutoff: 8-10h before sleep\n\n💡 Cycle off every 4-6 weeks.';
+      if (kw === 'bedtime') return '🌙 Before Bed\n\n• 30-40g slow protein\n• Cottage cheese, Greek yogurt\n\n💡 Prevents overnight breakdown.';
+      if (kw === 'fats') return '🥑 Healthy Fats\n\n• 0.8-1g per kg\n• Olive oil, avocado, nuts, fatty fish\n• Omega-3: 2-3g/day\n\n💡 Too low = low testosterone.';
+      if (kw === 'carbs') return '🍞 Carbs\n\n• Athletes: 4-6g per kg\n• Sedentary: 2-3g per kg\n\n💡 Carbs don\'t make you fat.';
+      if (kw === 'preworkout') return '🥗 Pre-Workout Meal\n\n• 60-90 min before: Carbs + protein\n• Small snack 30 min: banana, dates\n\n💡 Avoid heavy fats.';
+      if (kw === 'postworkout') return '🍗 Post-Workout\n\n• Within 2 hours\n• Protein: 30-40g\n• Carbs: 0.5-1g per kg';
+      if (kw === 'mealfreq') return '🍽️ Meals Per Day\n\n• 3 meals + snacks: Standard\n• 4-6 small: Appetite control\n\n💡 Frequency doesn\'t matter much.';
+      if (kw === 'alcohol') return '🍺 Alcohol\n\n• Slows recovery 30-40%\n• Disrupts sleep\n• 7 kcal/g\n\n💡 The #1 recovery killer.';
+      if (kw === 'sodium') return '🧂 Salt\n\n• General: 2300mg/day\n• Athletes: 3000-5000mg\n\n💡 You need it.';
+      if (kw === 'veggies') return '🥦 Best Veggies\n\n• Leafy greens: spinach, kale\n• Cruciferous: broccoli\n• Peppers: vitamin C\n\n💡 4-6 servings/day.';
+      if (kw === 'fruits') return '🍎 Best Fruits\n\n• Bananas: fast carbs\n• Berries: antioxidants\n• Oranges: vitamin C\n\n💡 2-4 servings/day.';
+      if (kw === 'nuts') return '🥜 Nuts & Seeds\n\n• Almonds: vit E\n• Walnuts: omega-3\n• Chia: omega-3\n\nPortion: 30-40g.';
+      if (kw === 'eggs') return '🍳 Eggs\n\nPer egg:\n• 6-7g protein\n• 5g fat\n• 70 cal\n\n💡 2-4/day is fine.';
+      if (kw === 'dairy') return '🥛 Dairy\n\nBenefits: Protein + calcium\nIssues: Lactose, acne\n\n💡 Depends on your digestion.';
+      if (kw === 'vegan') return '🌱 Vegan Protein\n\n• Tofu + tempeh\n• Lentils + chickpeas\n• Seitan\n• Quinoa\n\n💡 Combine grains + legumes.';
+      if (kw === 'carbtiming') return '🍚 Carb Timing\n\nPre-workout: 30-60g complex\nPost-workout: 0.5-1g per kg\n\n💡 Carbs are fuel.';
+      if (kw === 'vitamins') return '💊 Multivitamins\n\n• Most: No\n• Athletes: D3, magnesium, omega-3\n• Vegans: B12, iron, zinc\n\n💡 Test first.';
+      if (kw === 'counting') return '⚖️ Count Calories?\n\n• Beginners: YES 2-4 weeks\n• Then: Protein + total\n\n💡 Track to learn.';
+      return 'Nutrition Neural Core ready.';
+    }
+  },
+  recoveryAI: {
+    title: 'Recovery AI Protocol',
+    greeting: 'Sports medicine physician ready. Pick a question below.',
+    questions: [
+      { label: '🩹 RICE protocol', key: 'rice' },
+      { label: '⏱️ Healing timeline', key: 'timeline' },
+      { label: '💊 Pain management', key: 'pain' },
+      { label: '🧘 Mobility routine', key: 'mobility' },
+      { label: '🚶 Return to sport', key: 'return' },
+      { label: '🧊 Ice vs heat?', key: 'iceheat' },
+      { label: '💊 When to see a doctor?', key: 'doctor' },
+      { label: '🛌 Rest vs active recovery', key: 'restvsactive' },
+      { label: '🚫 What NOT to do?', key: 'dont' },
+      { label: '🥗 Nutrition for healing', key: 'nutrition' },
+      { label: '💊 Anti-inflammatory drugs?', key: 'nsaids' },
+      { label: '🩹 Compression — how?', key: 'compression' },
+      { label: '🛌 Sleep for recovery', key: 'sleep' },
+      { label: '💧 Hydration for healing', key: 'hydration' },
+      { label: '🧘 When can I stretch?', key: 'stretch' },
+      { label: '🏃 Cross-training options', key: 'crosstrain' },
+      { label: '🧊 How to ice properly?', key: 'icing' },
+      { label: '🩺 Physio — worth it?', key: 'physio' },
+      { label: '💊 Pain meds — ok?', key: 'painmeds' },
+      { label: '📈 Progress tracking', key: 'tracking' },
+      { label: '🧠 Mental side of injury', key: 'mental' },
+      { label: '🚭 Smoking & healing', key: 'smoking' },
+      { label: '🍺 Alcohol & healing', key: 'alcohol' },
+      { label: '🩹 Kinesiology tape?', key: 'tape' },
+      { label: '❄️ Ice bath — helpful?', key: 'icebath' }
+    ],
+    read: function() {
+      return { injury: val('injury-type', 'sprain'), days: num('injury-days', 2), pain: num('pain-level', 5), weight: 70 };
+    },
+    build: function(i, kw) {
+      var labels = { sprain: 'Ankle Sprain', strain: 'Muscle Strain', knee: 'Knee Pain', back: 'Lower Back Pain', shoulder: 'Shoulder Injury', headache: 'Headache/Migraine' };
+      var name = labels[i.injury] || i.injury;
+      var stage = i.days <= 2 ? 'Acute Phase' : i.days <= 7 ? 'Sub-Acute Phase' : 'Rehabilitation Phase';
+      var sev = i.pain <= 3 ? 'Mild' : i.pain <= 7 ? 'Moderate' : 'Severe';
+
+      if (kw === 'rice') return '🩹 RICE — ' + name + '\n\n• R — Rest 24-48h\n• I — Ice 15-20 min every 2-3h\n• C — Compression\n• E — Elevation\n\nStage: ' + stage + ' | Pain: ' + sev + '\n\n💡 First 48-72h critical.';
+      if (kw === 'timeline') {
+        var tl = { sprain: '2-4 weeks', strain: '1-3 weeks', knee: '4-8 weeks', back: '2-6 weeks', shoulder: '4-12 weeks', headache: '24-72h' };
+        return '⏱️ Healing — ' + name + '\n\n• Expected: ' + (tl[i.injury] || 'varies') + '\n• Stage: ' + stage + '\n• Days: ' + i.days + '\n\nPhases:\n1. Inflammatory (0-3 days)\n2. Repair (3-21 days)\n3. Remodeling (3 weeks - 6 months)';
+      }
+      if (kw === 'pain') return '📊 Pain — ' + sev + ' (' + i.pain + '/10)\n\n' +
+        (i.pain <= 3 ? '• Light activity, ice' :
+         i.pain <= 7 ? '• Rest, ice 15-20 min\n• Anti-inflammatory' :
+         '• See doctor within 24-48h');
+      if (kw === 'mobility') return '🧘 Mobility\n\n• ROM: 10 slow reps × 2 daily\n• Isometric holds: 5 × 10-20s\n• STOP if pain\n\nStage: ' + stage;
+      if (kw === 'return') return '🚶 Return to Sport\n\n• Pain-free\n• Full ROM\n• Strength 90%+\n• No swelling 48h\n\n' +
+        (i.pain <= 3 && i.days >= 7 ? '✅ Test light first.' :
+         i.pain <= 7 ? '⚠️ Complete stage first.' :
+         '❌ Do NOT return.');
+      if (kw === 'iceheat') return '🧊 Ice vs Heat\n\n• ICE (0-72h): swelling\n• HEAT (after): chronic stiffness\n\n💡 Ice for NEW, heat for OLD.';
+      if (kw === 'doctor') return '💊 See Doctor If:\n\n• Pain 8+/10\n• Can\'t bear weight\n• Numbness\n• Visible deformity\n• No improvement in 1 week';
+      if (kw === 'restvsactive') return '🛌 Rest vs Active\n\n• Rest (0-3 days): Complete\n• Active (after): Light walk, mobility\n\n💡 "Motion is lotion."';
+      if (kw === 'dont') return '🚫 What NOT to Do\n\n• Push through pain\n• Heat within 72h\n• Massage fresh injury\n• Ice >20 min\n• Rush return';
+      if (kw === 'nutrition') return '🥗 Nutrition for Healing\n\n• Protein: 1.6-2.2g/kg\n• Vitamin C\n• Vitamin D\n• Zinc\n• Omega-3\n\n💡 Healing burns extra calories.';
+      if (kw === 'nsaids') return '💊 NSAIDs\n\n• Ibuprofen, naproxen\n• Short-term (48-72h)\n\n💡 Short-term only.';
+      if (kw === 'compression') return '🩹 Compression\n\n• Elastic bandage\n• Snug but not tight\n• Remove at night if improved';
+      if (kw === 'sleep') return responseSleepCommon() + '\n\n🩹 During injury: 8-10 hours ideal.';
+      if (kw === 'hydration') return '💧 Hydration\n\n• 30-35ml/kg\n• 2-3L/day minimum\n\n💡 Cells need water to repair.';
+      if (kw === 'stretch') return '🧘 When to Stretch\n\n• Acute (0-72h): NO\n• Sub-acute: Gentle ROM\n• Rehab (7+): Progressive\n\n💡 Never into pain.';
+      if (kw === 'crosstrain') return '🏃 Cross-Training\n\n• Upper injury → lower cardio\n• Lower injury → swim, row\n\n💡 Get clearance first.';
+      if (kw === 'icing') return '🧊 How to Ice\n\n• Wrap in towel\n• 15-20 min\n• 60-90 min between sessions';
+      if (kw === 'physio') return '🩺 Physio\n\nYES if:\n• >1 week no improvement\n• Can\'t move normally\n\n💡 Better than guessing.';
+      if (kw === 'painmeds') return '💊 Pain Meds\n\n• Short-term OK\n• Don\'t mask pain\n\n💡 Pain is information.';
+      if (kw === 'tracking') return '📈 Progress\n\n• Daily: Pain\n• Weekly: ROM, strength\n\n💡 Track what improves.';
+      if (kw === 'mental') return '🧠 Mental Side\n\nNormal:\n• Frustration\n• Re-injury anxiety\n\n💡 Focus on what you CAN do.';
+      if (kw === 'smoking') return '🚭 Smoking\n\n• Slows healing 30-50%\n\n💡 #1 modifiable risk.';
+      if (kw === 'alcohol') return '🍺 Alcohol\n\n• Slows tissue repair\n• Disrupts sleep\n\n💡 Zero during acute.';
+      if (kw === 'tape') return '🩹 Kinesiology Tape\n\nMight:\n• Support joints\n• Reduce swelling\n\n💡 Not a substitute for rehab.';
+      if (kw === 'icebath') return '❄️ Ice Baths\n\nFor INJURY: Yes\nFor MUSCLE: NO\n\n💡 Cold plunges feel good but slow gains.';
+      return 'Recovery AI Protocol ready.';
+    }
+  },
+  hydroAI: {
+    title: 'HydroFlow Hydro-Logics',
+    greeting: 'Hydration specialist ready. Pick a question below.',
+    questions: [
+      { label: '💧 My daily intake target', key: 'daily' },
+      { label: '🧂 Electrolyte needs', key: 'electrolyte' },
+      { label: '⏰ Hydration timing', key: 'timing' },
+      { label: '🌡️ Hot weather hydration', key: 'sweat' },
+      { label: '☕ Coffee & tea count?', key: 'coffee' },
+      { label: '🥤 Sports drinks — needed?', key: 'sportsdrinks' },
+      { label: '🍺 Alcohol & hydration', key: 'alcohol' },
+      { label: '💦 Signs of dehydration', key: 'dehydration' },
+      { label: '💧 Can I drink too much?', key: 'toomuch' },
+      { label: '🎯 Best bottle strategy', key: 'strategy' },
+      { label: '🏃 Hydration during long runs', key: 'longrun' },
+      { label: '🧊 Cold vs room temp water?', key: 'temp' },
+      { label: '🌡️ Cold weather hydration', key: 'cold' },
+      { label: '🤒 Hydration when sick', key: 'sick' },
+      { label: '🍼 Water with meals?', key: 'meals' },
+      { label: '💧 Sparkling water ok?', key: 'sparkling' },
+      { label: '🥥 Coconut water benefits?', key: 'coconut' },
+      { label: '⚡ Energy drinks — ok?', key: 'energy' },
+      { label: '💊 Hydration supplements?', key: 'supps' },
+      { label: '🍋 Infused water ideas?', key: 'infused' },
+      { label: '🌙 Water before bed?', key: 'bedtime' },
+      { label: '💧 How to track intake?', key: 'track' },
+      { label: '🚴 Hydration for cyclists', key: 'cyclists' },
+      { label: '⚽ Team sport hydration', key: 'team' },
+      { label: '🧠 Hydration & brain function', key: 'brain' }
+    ],
+    read: function() {
+      return { weight: num('hydro-weight', 70), height: num('hydro-height', 170), exercise: num('hydro-exercise', 60), age: num('hydro-age', 30), gender: toggle('hydro-gender', 'm') };
+    },
+    build: function(i, kw) {
+      var base = i.weight * 0.033 + (i.height - 150) * 0.015;
+      var total = base + i.exercise * 0.012;
+      total *= (i.gender === 'm') ? 1.1 : 0.95;
+      if (i.age > 30) total *= 0.97;
+      total = Math.max(1.5, Math.min(5, total));
+
+      if (kw === 'daily') return '💧 Your Daily Hydration\n\n• Weight: ' + i.weight + 'kg\n• Target: ' + total.toFixed(1) + 'L/day\n• Includes ' + i.exercise + ' min exercise\n\n💡 Pale yellow urine = optimal.';
+      if (kw === 'electrolyte') return '🧂 Electrolytes\n\n• Sodium: 300-600mg/hour\n• Potassium: 150-300mg\n• Magnesium: 60-100mg\n\n💡 Needed >90 min or hot climates.';
+      if (kw === 'timing') return '⏰ Timing\n\n• 2h before: 500ml\n• 15 min before: 250ml\n• Every 15-20 min during: 150-250ml\n\n💡 Sip, don\'t chug.';
+      if (kw === 'sweat') return '🌡️ Hot Weather\n\n• +500ml-1L per hour\n• Add electrolytes\n\n💡 Heat + humidity = more sodium loss.';
+      if (kw === 'coffee') return '☕ Coffee & Tea\n\n• They hydrate\n• Caffeine limit: 400mg/day\n• Avoid 8-10h before bed\n\n💡 Coffee is 98% water.';
+      if (kw === 'sportsdrinks') return '🥤 Sports Drinks\n\n• <60 min: Water\n• 60-90 min: Water + snack\n• >90 min: Sports drink\n\n💡 Most are 90% sugar.';
+      if (kw === 'alcohol') return '🍺 Alcohol\n\n• Diuretic\n• 1 drink = ~250ml dehydration\n\n💡 Alternate with water.';
+      if (kw === 'dehydration') return '💦 Signs\n\n• Dark urine\n• Dry mouth\n• Headache\n• Fatigue\n\n💡 Thirst is LATE.';
+      if (kw === 'toomuch') return '💧 Too Much?\n\n• Yes — hyponatremia\n\nSafe: Max 1L/hour\n\n💡 More isn\'t better.';
+      if (kw === 'strategy') return '🎯 Strategy\n\n• 1L bottle at desk\n• Phone reminders every 2h\n• 500ml on waking\n\n💡 Track it.';
+      if (kw === 'longrun') return '🏃 Long Runs\n\n• <60 min: Not needed\n• 60-90 min: 500ml + electrolytes\n• 90+ min: 500-750ml/hour\n\n💡 >2% dehydration kills performance.';
+      if (kw === 'temp') return '🧊 Cold vs Room Temp\n\n• Cold: Better cooling during exercise\n• Room: Easier to drink quickly\n\n💡 Both hydrate equally.';
+      if (kw === 'cold') return '🌡️ Cold Weather\n\n• You still lose fluid\n• Cold blunts thirst\n\n💡 Winter dehydration is real.';
+      if (kw === 'sick') return '🤒 When Sick\n\n• +500ml to +1L above normal\n• Water + electrolytes\n• Broth, soups\n\n💡 Dehydration worsens illness.';
+      if (kw === 'meals') return '🍼 Water with Meals?\n\n• Yes, fine\n• Aids digestion\n\n💡 Myth busted.';
+      if (kw === 'sparkling') return '💧 Sparkling Water\n\n• Hydrates same as still\n• May help satiety\n\n💡 Watch: club soda, tonic.';
+      if (kw === 'coconut') return '🥥 Coconut Water\n\n• Natural electrolytes\n• ~45 cal per cup\n\n💡 Real coconut, not sweetened.';
+      if (kw === 'energy') return '⚡ Energy Drinks\n\n• High caffeine + sugar\n• NOT sports drinks\n\n💡 Coffee is cleaner.';
+      if (kw === 'supps') return '💊 Hydration Supps\n\n• LMNT, Nuun, Liquid IV\n• Look for: sodium, potassium, magnesium\n\n💡 Salt + water + lemon works too.';
+      if (kw === 'infused') return '🍋 Infused Water\n\n• Lemon + cucumber\n• Strawberry + basil\n• Orange + mint\n\n💡 Great for non-water drinkers.';
+      if (kw === 'bedtime') return '🌙 Before Bed\n\n• Small glass OK\n• Large = waking up to pee\n\n💡 Last big drink 2h before.';
+      if (kw === 'track') return '💧 Track Intake\n\n• Apps: WaterMinder\n• Marked bottle\n• 8-10 glasses/day\n\n💡 Track 1 week to learn.';
+      if (kw === 'cyclists') return '🚴 Cyclists\n\n• 500-750ml per hour\n• Electrolytes >90 min\n• 2+ bottles\n\n💡 Set timer.';
+      if (kw === 'team') return '⚽ Team Sports\n\n• Pre: 500ml 2h before\n• During: 150-250ml every 15-20 min\n• Halftime: 400-600ml';
+      if (kw === 'brain') return '🧠 Brain\n\n• 2% dehydration = 10-20% focus drop\n\n💡 Hydrate for physical AND mental.';
+      return 'HydroFlow ready.';
+    }
+  },
+  caloAI: {
+    title: 'Metabolic Analytics Engine',
+    greeting: 'Metabolic scientist ready. Pick a question below.',
+    questions: [
+      { label: '🔥 My TDEE breakdown', key: 'tdee' },
+      { label: '⚙️ My BMR calculation', key: 'bmr' },
+      { label: '📉 Fat loss deficit plan', key: 'deficit' },
+      { label: '📈 Lean bulk surplus', key: 'surplus' },
+      { label: '🍽️ Meals per day?', key: 'meals' },
+      { label: '🚶 Does walking burn calories?', key: 'walking' },
+      { label: '⚖️ Weight has stalled', key: 'stall' },
+      { label: '🔄 Refeed days — needed?', key: 'refeed' },
+      { label: '📊 Track macros or calories?', key: 'tracking' },
+      { label: '😴 Sleep & metabolism', key: 'sleep' },
+      { label: '🧊 Cold exposure burn fat?', key: 'cold' },
+      { label: '☕ Caffeine boost metabolism?', key: 'caffeine' },
+      { label: '🔥 Best fat-burning exercise?', key: 'fatburn' },
+      { label: '🍺 Alcohol calories?', key: 'alcohol' },
+      { label: '🍫 Sugar & metabolism?', key: 'sugar' },
+      { label: '🍞 Carbs after 6 PM?', key: 'latemeal' },
+      { label: '📈 Cheat day advice?', key: 'cheat' },
+      { label: '💧 Water & metabolism', key: 'water' },
+      { label: '🚫 Starvation mode — real?', key: 'starvation' },
+      { label: '🧬 Metabolic adaptation', key: 'adaptive' },
+      { label: '🩸 Insulin & fat loss', key: 'insulin' },
+      { label: '🥗 Volume eating tips', key: 'volume' },
+      { label: '📉 Lose fat without muscle loss', key: 'preserve' },
+      { label: '📊 Body fat % estimate', key: 'bodyfat' },
+      { label: '🍽️ Best meal frequency?', key: 'freq' }
+    ],
+    read: function() {
+      return { age: num('calo-age', 30), weight: num('calo-weight', 70), height: num('calo-height', 170), gender: toggle('calo-gender', 'male'), activity: toggle('calo-activity', 'moderate') };
+    },
+    build: function(i, kw) {
+      var bmr = (i.gender === 'male') ? (10 * i.weight) + (6.25 * i.height) - (5 * i.age) + 5 : (10 * i.weight) + (6.25 * i.height) - (5 * i.age) - 161;
+      var mults = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very: 1.9 };
+      var tdee = Math.round(bmr * (mults[i.activity] || 1.55));
+
+      if (kw === 'tdee') return '🔥 TDEE\n\n• BMR: ' + Math.round(bmr) + ' kcal\n• ×' + (mults[i.activity] || 1.55) + '\n• TDEE: ' + tdee + ' kcal\n\n💡 Eat at TDEE to maintain.';
+      if (kw === 'bmr') return '⚙️ BMR\n\n• Mifflin-St Jeor\n• BMR: ' + Math.round(bmr) + ' kcal/day\n\n💡 What you burn at rest.';
+      if (kw === 'deficit') return '📉 Fat Loss Deficit\n\n• Target: ' + (tdee - 500) + ' kcal\n• Min safe: ' + (i.gender === 'male' ? 1500 : 1200) + '\n• Protein: 2.2g/kg\n• Rate: 0.5-1 kg/week';
+      if (kw === 'surplus') return '📈 Lean Bulk\n\n• Target: ' + (tdee + 300) + ' kcal\n• Protein: 2.0g/kg\n• Rate: 0.25-0.5 kg/week';
+      if (kw === 'meals' || kw === 'freq') return '🍽️ Meals Per Day\n\n• 3 meals + snacks: Standard\n• 4-6 small: Appetite control\n\n💡 Total intake > frequency.';
+      if (kw === 'walking') return '🚶 Walking\n\n• ~50 cal per 1,000 steps\n• NEAT = 15-30% daily burn\n\n💡 Most underrated fat-loss tool.';
+      if (kw === 'stall') return responsePlateauCommon();
+      if (kw === 'refeed') return '🔄 Refeed Days\n\n• 1-2 days/week at maintenance\n• More carbs\n\n💡 Great for long cuts.';
+      if (kw === 'tracking') return '📊 Track?\n\n• Beginners: Calories\n• Intermediate: + Protein\n• Advanced: All macros\n\n💡 Track what works.';
+      if (kw === 'sleep') return responseSleepCommon() + '\n\n😴 <6h = +20% hunger hormone.';
+      if (kw === 'cold') return '🧊 Cold Exposure\n\n• Activates brown fat\n\n💡 Small addition (+50-100 cal).';
+      if (kw === 'caffeine') return '☕ Caffeine\n\n• +3-11% metabolism short-term\n• 3-6mg/kg pre-workout\n\n💡 Cycle off periodically.';
+      if (kw === 'fatburn') return '🔥 Best Fat-Burning\n\n1. Whatever you\'ll do consistently\n2. Strength training\n3. Walking\n4. HIIT\n\n💡 Diet controls fat loss.';
+      if (kw === 'alcohol') return '🍺 Alcohol\n\n• 7 kcal/g\n• Beer ~150 cal/pint\n\n💡 Liquid calories add up.';
+      if (kw === 'sugar') return '🍫 Sugar\n\n• Not uniquely fattening\n• Excess calories are\n\n💡 80/20 rule.';
+      if (kw === 'latemeal') return '🍞 Carbs After 6 PM?\n\nMyth: Fat gain\nTruth: Total intake matters.\n\n💡 Evening carbs may improve sleep.';
+      if (kw === 'cheat') return '📈 Cheat Meals\n\n• One meal won\'t ruin progress\n• Plan them\n\n💡 90/10 rule.';
+      if (kw === 'water') return responseHydrationCommon(i);
+      if (kw === 'starvation') return '🚫 Starvation Mode\n\nPartial truth:\n• Severe restriction = slowdown\n\n💡 Moderate deficit is safe.';
+      if (kw === 'adaptive') return '🧬 Metabolic Adaptation\n\n• BMR drops 5-15%\n• NEAT drops\n\n💡 Plan for it.';
+      if (kw === 'insulin') return '🩸 Insulin\n\n• Not "the fat hormone"\n• Calories drive fat loss\n\n💡 Insulin helps hunger.';
+      if (kw === 'volume') return '🥗 Volume Eating\n\n• Leafy greens, broccoli\n• Berries, melons\n• Lean protein\n\n💡 2× volume, same calories.';
+      if (kw === 'preserve') return '📉 Fat Loss, Keep Muscle\n\n1. Protein: 2.2g/kg\n2. Resistance training\n3. Moderate deficit\n4. Sleep 7-9h\n\n💡 Muscle loss = slower metabolism.';
+      if (kw === 'bodyfat') return '📊 Body Fat %\n\nMost → least:\n1. DEXA\n2. BodPod\n3. Calipers\n4. Smart scale (trends)\n\n💡 Track trends.';
+      return 'Metabolic Analytics ready.';
+    }
+  },
+  sleepAI: {
+    title: 'Circadian Sleep Optimizer',
+    greeting: 'Sleep neuroscientist ready. Pick a question below.',
+    questions: [
+      { label: '😴 My optimal bedtime', key: 'bedtime' },
+      { label: '🧠 REM cycles explained', key: 'rem' },
+      { label: '🌅 Morning wake-up routine', key: 'morning' },
+      { label: '☕ Caffeine cutoff time', key: 'caffeine' },
+      { label: '📱 Screens before bed?', key: 'screens' },
+      { label: '🍽️ Eating before bed?', key: 'eating' },
+      { label: '🌡️ Best room temperature', key: 'temp' },
+      { label: '💊 Melatonin — should I take it?', key: 'melatonin' },
+      { label: '🌙 Best sleep position', key: 'position' },
+      { label: '🛌 How to fall asleep faster', key: 'faster' },
+      { label: '😴 Naps — good or bad?', key: 'naps' },
+      { label: '🚫 Why do I wake at 3 AM?', key: 'wake3am' },
+      { label: '🍷 Alcohol & sleep', key: 'alcohol' },
+      { label: '🏋️ Late workouts & sleep', key: 'lateworkout' },
+      { label: '☀️ Sunlight & circadian rhythm', key: 'sunlight' },
+      { label: '🕐 Can I catch up on sleep?', key: 'catchup' },
+      { label: '🛏️ Best mattress for sleep', key: 'mattress' },
+      { label: '🧦 Socks to bed — good?', key: 'socks' },
+      { label: '🌿 Magnesium for sleep?', key: 'magnesium' },
+      { label: '🍵 Best bedtime tea?', key: 'tea' },
+      { label: '🎧 White noise machines?', key: 'whitenoise' },
+      { label: '📖 Reading before bed?', key: 'reading' },
+      { label: '💤 Sleep trackers — accurate?', key: 'trackers' },
+      { label: '🧠 Dreams & memory', key: 'dreams' },
+      { label: '⚠️ Signs of sleep deprivation', key: 'deprived' }
+    ],
+    read: function() {
+      return { age: num('sleep-age', 25), wake: val('sleep-wake', '07:00') };
+    },
+    build: function(i, kw) {
+      if (kw === 'bedtime') {
+        var parts = (i.wake || '07:00').split(':');
+        var wH = parseInt(parts[0]) || 7;
+        var wM = parseInt(parts[1]) || 0;
+        var opts = [{h:9.0,l:'6 cycles'},{h:7.5,l:'5 cycles'},{h:6.0,l:'4 cycles'}];
+        var out = '😴 Bedtimes for ' + i.wake + ' Wake:\n\n';
+        for (var k = 0; k < opts.length; k++) {
+          var total = Math.round(opts[k].h * 60) + 15;
+          var t = wH * 60 + wM - total;
+          t = ((t % 1440) + 1440) % 1440;
+          var hh = Math.floor(t / 60), mm = t % 60;
+          var ap = hh >= 12 ? 'PM' : 'AM';
+          var h12 = hh % 12 || 12;
+          out += '• ' + h12 + ':' + (mm < 10 ? '0' + mm : mm) + ' ' + ap + ' — ' + opts[k].l + '\n';
+        }
+        return out;
+      }
+      if (kw === 'rem') return '🧠 Sleep Architecture\n\n• Cycle ≈ 90 min\n• Deep sleep: muscle repair\n• REM: memory consolidation\n• Aim 5-6 cycles\n\n💡 Cutting sleep = skipped REM.';
+      if (kw === 'morning') return '🌅 Morning\n\n• Wake at end of cycle\n• Natural light within 30 min\n• Delay caffeine 90 min\n\n💡 Consistency trains rhythm.';
+      if (kw === 'caffeine') return '☕ Cutoff\n\n• Half-life: 5-6h\n• Cutoff: 8-10h before bed\n• Max: 400mg/day\n\n💡 Late caffeine = reduced deep sleep.';
+      if (kw === 'screens') return '📱 Screens\n\n• Blue light suppresses melatonin\n• Stop 60 min before bed\n\n💡 Scrolling delays sleep.';
+      if (kw === 'eating') return '🍽️ Eating Before Bed\n\n• Last big meal 2-3h before\n• Small snack OK: yogurt\n\n💡 Best snack: 30-40g slow protein.';
+      if (kw === 'temp') return '🌡️ Room Temp\n\n• Optimal: 65-68°F (18-20°C)\n\n💡 Body cools 1-2°F to initiate sleep.';
+      if (kw === 'melatonin') return '💊 Melatonin\n\n• 0.5-3mg\n• 30-60 min before bed\n• Short-term use';
+      if (kw === 'position') return '🌙 Best Position\n\n• Back: Best spine\n• Side: Great for apnea\n• Stomach: Worst\n\n💡 Left-side improves digestion.';
+      if (kw === 'faster') return '🛌 Fall Asleep Faster\n\n• 4-7-8 breathing\n• Cool room + warm shower\n• Same schedule\n\n💡 Racing mind? Journal.';
+      if (kw === 'naps') return '😴 Naps\n\n• 10-20 min: Power nap\n• 60-90 min: Full cycle\n\n💡 Not after 4 PM.';
+      if (kw === 'wake3am') return '🚫 Waking at 3 AM\n\n• Alcohol\n• Blood sugar drop\n• Cortisol surge\n\n💡 Fix lifestyle.';
+      if (kw === 'alcohol') return '🍷 Alcohol & Sleep\n\n• Destroys quality\n• Suppresses REM\n• 2-4 AM awakenings\n\n💡 Sleep on alcohol < no sleep.';
+      if (kw === 'lateworkout') return '🏋️ Late Workouts\n\n• Intense <2h before bed delays sleep\n\n💡 Finish 2h before.';
+      if (kw === 'sunlight') return '☀️ Sunlight\n\n• Morning sun = wake signal\n• Sets 16h wake window\n\n💡 Light is #1 sleep regulator.';
+      if (kw === 'catchup') return '🕐 Catching Up\n\n• Partial catch-up possible\n• Can\'t reverse chronic debt\n\n💡 Consistency > bingeing.';
+      if (kw === 'mattress') return '🛏️ Mattress\n\n• Medium-firm: Best for most\n\nReplace every 7-10 years.';
+      if (kw === 'socks') return '🧦 Socks to Bed?\n\n• Yes — helpful!\n• Warm feet = faster sleep\n\n💡 Warm feet + cool room.';
+      if (kw === 'magnesium') return '🌿 Magnesium\n\n• Glycinate, citrate\n• 200-400mg 1h before bed\n\n💡 Works if deficient.';
+      if (kw === 'tea') return '🍵 Bedtime Teas\n\n• Chamomile\n• Lavender\n• Valerian root\n\nAvoid: black + green.';
+      if (kw === 'whitenoise') return '🎧 White Noise\n\n• Masks sounds\n• Pink: softer\n• Brown: deepest\n\n💡 Fan works too.';
+      if (kw === 'reading') return '📖 Reading\n\n• Physical book > e-reader\n• 15-30 min wind-down\n\n💡 Replaces scrolling.';
+      if (kw === 'trackers') return '💤 Trackers\n\nAccuracy: Mixed\n\n💡 Use for trends, not judgment.';
+      if (kw === 'dreams') return '🧠 Dreams\n\n• Mostly in REM\n• Consolidates memory\n\n💡 Study before bed.';
+      if (kw === 'deprived') return '⚠️ Deprivation\n\n• Yawning all day\n• Mood swings\n• Forgetfulness\n\n💡 If you need caffeine to function, you\'re deprived.';
+      return 'Sleep Optimizer ready.';
+    }
+  },
+  postureAI: {
+    title: 'Biomechanical Posture Core',
+    greeting: 'Physiotherapist ready. Pick a question below.',
+    questions: [
+      { label: '🧘 Corrective exercise routine', key: 'corrective' },
+      { label: '💻 Desk ergonomics setup', key: 'desk' },
+      { label: '📱 How to fix text neck', key: 'neck' },
+      { label: '🦵 Pelvic tilt fixes', key: 'tilt' },
+      { label: '🛏️ Best sleeping posture', key: 'sleeping' },
+      { label: '🏋️ Posture & lifting form', key: 'lifting' },
+      { label: '🪑 Best chair for posture', key: 'chair' },
+      { label: '📸 How to check my posture', key: 'check' },
+      { label: '⚡ 5-min posture reset', key: 'reset' },
+      { label: '🚫 Posture mistakes to avoid', key: 'mistakes' },
+      { label: '🧘 Foam rolling guide', key: 'foam' },
+      { label: '🏃 Running form & posture', key: 'running' },
+      { label: '🦶 Foot health & posture', key: 'foot' },
+      { label: '👟 Best shoes for posture', key: 'shoes' },
+      { label: '📚 Best posture books/videos', key: 'resources' },
+      { label: '🧠 Mind-muscle connection', key: 'mindmuscle' },
+      { label: '💪 Core exercises for posture', key: 'core' },
+      { label: '🤸 Mobility drills for desk workers', key: 'mobility' },
+      { label: '🦴 Scoliosis — what to do?', key: 'scoliosis' },
+      { label: '⚖️ Posture correctors — worth it?', key: 'correctors' },
+      { label: '🧘 Yoga for posture', key: 'yoga' },
+      { label: '🧊 Heat vs ice for tight muscles', key: 'iceheat' },
+      { label: '💊 Muscle relaxers — ok?', key: 'relaxers' },
+      { label: '🩺 When to see a physio?', key: 'physio' },
+      { label: '⏰ How long to fix posture?', key: 'howlong' }
+    ],
+    read: function() {
+      return { hours: num('posture-hours', 8), type: val('posture-type', 'forward') };
+    },
+    build: function(i, kw) {
+      if (kw === 'corrective') return '🧘 Corrective Routine\n\n• Chin tucks: 10 × 3 daily\n• Wall angels: 10 × 2\n• Doorway chest stretch: 30s × 3\n• Dead bug: 10 × 2\n\n💡 2-3× per day.';
+      if (kw === 'desk') return '💻 Desk Setup\n\n• Monitor at eye level\n• Feet flat, knees 90°\n• Elbows 90°\n• Lumbar support\n\n💡 Every 30 min: stand.';
+      if (kw === 'neck') return '📱 Text Neck\n\n• Phone at eye level\n• Chin tucks hourly\n• Neck stretches\n\n💡 Every inch forward = 4.5kg extra load.';
+      if (kw === 'tilt') return '🦵 Pelvic Tilt\n\n• Glute bridges: 15 × 3\n• Hip flexor stretch\n• Planks: 30-60s\n\n💡 Weak glutes + tight hip flexors.';
+      if (kw === 'sleeping') return '🛏️ Sleeping Posture\n\n• Back: Best\n• Side: Pillow between knees\n• Stomach: Worst\n\n💡 Affects 7-9h daily.';
+      if (kw === 'lifting') return '🏋️ Lifting Form\n\n• Hinge at hips\n• Load close to body\n• Neutral spine\n• Brace core\n\n💡 Protects spine for life.';
+      if (kw === 'chair') return '🪑 Best Chair\n\n• Adjustable height\n• Lumbar support\n• Armrests\n\n💡 Lumbar roll + footrest = instant upgrade.';
+      if (kw === 'check') return '📸 Check Posture\n\n• Stand sideways in mirror\n• Imagine plumb line\n\nLook for:\n• Ear over shoulder\n• Shoulder over hip';
+      if (kw === 'reset') return '⚡ 5-Min Reset\n\n• Chin tucks\n• Doorway chest stretch\n• Wall angels\n• Hip flexor stretch\n• Neck + shoulder rolls\n\n💡 2-3× per day.';
+      if (kw === 'mistakes') return '🚫 Mistakes\n\n• Slouching on phone\n• Lifting with back\n• Bag on one shoulder\n• Sleeping on stomach\n\n💡 Fix habit, not just posture.';
+      if (kw === 'foam') return '🧘 Foam Rolling\n\n• 30-60s per muscle\n• Roll slowly\n\nBest: quads, IT band, calves, upper back.\n\nAvoid: lower back.';
+      if (kw === 'running') return '🏃 Running Form\n\n• Head level\n• Shoulders relaxed\n• Arms 90°\n• Slight forward lean\n\n💡 Efficient form = fewer injuries.';
+      if (kw === 'foot') return '🦶 Foot Health\n\n• Flat feet: Pronation\n• High arches: Poor shock absorption\n\nExercises: toe curls, arch lifts.\n\n💡 Posture starts at ground.';
+      if (kw === 'shoes') return '👟 Best Shoes\n\n• Wide toe box\n• Low heel drop\n• Flexible sole\n\n💡 Replace every 500-800km.';
+      if (kw === 'resources') return '📚 Resources\n\nBooks:\n• Becoming a Supple Leopard\n• Move Your DNA\n\nYouTube: Athlean-X, Jeremy Ethier.';
+      if (kw === 'mindmuscle') return '🧠 Mind-Muscle\n\n• Think about target muscle\n• Slow reps\n• Visualize\n\n💡 Bodybuilders use this.';
+      if (kw === 'core') return '💪 Core\n\n• Planks: 30-60s\n• Dead bugs\n• Bird dogs\n• Pallof press\n\n💡 Core stability = posture support.';
+      if (kw === 'mobility') return '🤸 Mobility\n\nHourly:\n• Shoulder rolls\n• Hip flexor stretch\n• Neck rolls\n\nDaily: 5-min reset.';
+      if (kw === 'scoliosis') return '🦴 Scoliosis\n\n• Mild (<20°): Monitor + exercise\n• Moderate: Physio + brace\n• Severe: Medical\n\n💡 See specialist if diagnosed.';
+      if (kw === 'correctors') return '⚖️ Posture Correctors\n\nVerdict: Mostly NO.\n\n• Weakens muscles\n• Only works while worn\n\n💡 Real fix = strength + awareness.';
+      if (kw === 'yoga') return '🧘 Yoga for Posture\n\n• Cat-Cow\n• Downward Dog\n• Child\'s Pose\n• Bridge\n• Thread the Needle\n\n💡 3-4× per week.';
+      if (kw === 'iceheat') return '🧊 Heat vs Ice\n\n• HEAT: Chronic tightness\n• ICE: Acute injury\n\n💡 Tight muscles = heat.';
+      if (kw === 'relaxers') return '💊 Muscle Relaxers\n\n• Prescription only\n• Short-term\n\n💡 Fix cause.';
+      if (kw === 'physio') return '🩺 Physio?\n\n• Pain >2 weeks\n• Numbness\n• Affects daily life\n\n💡 Faster recovery.';
+      if (kw === 'howlong') return '⏰ How Long?\n\n• 2 weeks: Awareness\n• 4 weeks: Noticeable\n• 8-12 weeks: Habit\n\n💡 Patience.';
+      return 'Posture Core ready.';
+    }
+  },
+  stepsAI: {
+    title: 'Motion Activity Engine',
+    greeting: 'Activity scientist ready. Pick a question below.',
+    questions: [
+      { label: '👣 My daily step target', key: 'target' },
+      { label: '🏃 NEAT boosters', key: 'neat' },
+      { label: '🔥 Fat-loss walking plan', key: 'fat' },
+      { label: '📈 6-week progress plan', key: 'plan' },
+      { label: '🚶 Walking vs running?', key: 'vs' },
+      { label: '⏰ Best time to walk?', key: 'time' },
+      { label: '🏔️ Incline walking benefits', key: 'incline' },
+      { label: '🦵 Does walking build muscle?', key: 'muscle' },
+      { label: '💧 Water intake on walks?', key: 'water' },
+      { label: '🎧 Best walking workout', key: 'workout' },
+      { label: '📱 Best step tracker app?', key: 'tracker' },
+      { label: '🦶 Walking shoes guide', key: 'shoes' },
+      { label: '🧘 Walking meditation', key: 'meditation' },
+      { label: '🚶 Walking after meals?', key: 'aftermeals' },
+      { label: '🏃 Walking pace guide', key: 'pace' },
+      { label: '⛰️ Hill walking benefits', key: 'hill' },
+      { label: '🌧️ Walking in rain/heat?', key: 'weather' },
+      { label: '🐕 Walking with dog', key: 'dog' },
+      { label: '🎵 Music while walking?', key: 'music' },
+      { label: '📊 10,000 steps — myth?', key: 'myth' },
+      { label: '🦵 Knee pain & walking', key: 'kneepain' },
+      { label: '🌅 Morning walk benefits', key: 'morning' },
+      { label: '🌙 Evening walk benefits', key: 'evening' },
+      { label: '🍔 Walking & blood sugar', key: 'bloodsugar' },
+      { label: '⏱️ Walking duration', key: 'duration' }
+    ],
+    read: function() {
+      return { age: num('steps-age', 30), weight: num('steps-weight', 70), height: num('steps-height', 170), gender: toggle('steps-gender', 'male'), goal: toggle('steps-goal', 'health') };
+    },
+    build: function(i, kw) {
+      var bmi = i.weight / Math.pow(i.height / 100, 2);
+      var base = i.age < 18 ? 10000 : i.age < 40 ? 8000 : i.age < 65 ? 7000 : 6000;
+      if (bmi > 30) base += 2000; else if (bmi > 25) base += 1000;
+      if (i.goal === 'weight') base += 2500;
+      else if (i.goal === 'fitness') base += 1500;
+      if (i.gender === 'female') base += 500;
+      base = Math.max(4000, Math.min(15000, base));
+
+      if (kw === 'target') return '👣 Your Target\n\n• Daily: ' + Math.round(base) + ' steps\n• Age: ' + i.age + ' | BMI: ' + bmi.toFixed(1) + '\n\n💡 Split into 3 walks.';
+      if (kw === 'neat') return '🏃 NEAT Boosters\n\n• Stairs over elevator\n• Park farther\n• Walk on calls\n• 5-min break hourly\n\n💡 +2,000 steps ≈ +100 cal.';
+      if (kw === 'fat') return '🔥 Fat-Loss Walking\n\n• 10-12k steps/day\n• 1 long walk weekly\n• + resistance training\n\n💡 Preserves muscle.';
+      if (kw === 'plan') return '📈 6-Week Plan\n\n• W1-2: Current\n• W3-4: +1,000\n• W5-6: +2,000\n\n💡 Track weekly average.';
+      if (kw === 'vs') return '🚶 vs 🏃\n\nWalking:\n• Lower injury\n• Sustainable\n\nRunning:\n• Higher burn\n• Higher impact\n\n💡 Walking is underrated.';
+      if (kw === 'time') return '⏰ Best Time\n\n• Morning: Sets tone\n• After meals: Blood sugar\n• Evening: Stress relief\n\n💡 Post-meal walks best.';
+      if (kw === 'incline' || kw === 'hill') return '🏔️ Incline Walking\n\n• +50% burn\n• Targets glutes\n• Low impact\n\n15-30 min at 8-12% incline.';
+      if (kw === 'muscle') return '🦵 Building Muscle?\n\n• Minimal — cardio\n• Preserves muscle when dieting\n\n💡 Walking = leaner, not bulkier.';
+      if (kw === 'water') return responseHydrationCommon(i);
+      if (kw === 'workout') return '🎧 Best Workout\n\n• 5 min warm-up\n• 20 min brisk\n• Every 5 min: 1 min burst\n• 5 min cool-down\n\n💡 30 min brisk = ~150 cal.';
+      if (kw === 'tracker') return '📱 Trackers\n\nFree: Apple Health, Google Fit\nPaid: Fitbit, Strava, Pacer\n\n💡 Consistency = adherence.';
+      if (kw === 'shoes') return '🦶 Shoes\n\n• Wide toe box\n• Low heel drop\n• Cushioned\n\nReplace every 500-800km.';
+      if (kw === 'meditation') return '🧘 Walking Meditation\n\n• Walk slowly\n• Focus on steps\n• Breathe deeply\n\n💡 Motion + mindfulness.';
+      if (kw === 'aftermeals' || kw === 'bloodsugar') return '🚶 Post-Meal Walks\n\n• 10-15 min\n• Lowers blood sugar 30%\n\n💡 Simplest blood sugar hack.';
+      if (kw === 'pace') return '🏃 Pace\n\n• Casual: 2-2.5 mph\n• Brisk: 3-4 mph\n• Power: 4-5 mph\n\n💡 Aim brisk.';
+      if (kw === 'weather') return '🌧️ Weather\n\nRain: Jacket or treadmill\nHeat: Early/late, hydrate\n\n💡 Don\'t break the streak.';
+      if (kw === 'dog') return '🐕 Dog Walks\n\n• +2,500 steps/day\n• 30-60 min daily\n\n💡 Best accountability partner.';
+      if (kw === 'music') return '🎵 Music\n\n• Higher pace + energy\n• Podcast = longer walks\n\n💡 One earbud out near traffic.';
+      if (kw === 'myth') return '📊 10k Myth?\n\n• Origin: 1965 marketing\n• 7-8k = major benefits\n\n💡 Quality > quantity.';
+      if (kw === 'kneepain') return '🦵 Knee Pain\n\nWalking is GOOD:\n• Low impact\n• Lubricates joints\n• Strengthens support\n\n💡 Shorter stride, faster cadence.';
+      if (kw === 'morning') return '🌅 Morning\n\n• Sunlight resets rhythm\n• Mood + energy\n• Consistency booster\n\n💡 Makes day easier.';
+      if (kw === 'evening') return '🌙 Evening\n\n• Stress relief\n• Better sleep\n• Family time\n\n⚠️ Intense <2h before bed delays sleep.';
+      if (kw === 'duration') return '⏱️ Duration\n\n• Minimum: 10 min\n• Standard: 30 min/day\n• Fat loss: 45-60 min\n\n💡 Can split into 3×10.';
+      return 'Motion Activity ready.';
+    }
+  },
+  bpAI: {
+    title: 'Cardio-Vascular Monitor',
+    greeting: 'Cardio-vascular monitor ready. Pick a question below.',
+    questions: [
+      { label: '❤️ Healthy BP ranges', key: 'range' },
+      { label: '📉 How to lower my BP', key: 'lower' },
+      { label: '📊 Home monitoring tips', key: 'monitor' },
+      { label: '🥗 BP-friendly lifestyle', key: 'lifestyle' },
+      { label: '🧂 Salt & blood pressure', key: 'salt' },
+      { label: '🏃 Exercise for BP', key: 'exercise' },
+      { label: '😰 Stress & blood pressure', key: 'stress' },
+      { label: '☕ Coffee & BP', key: 'coffee' },
+      { label: '🚬 Smoking & BP', key: 'smoking' },
+      { label: '⚠️ When to see a doctor?', key: 'doctor' },
+      { label: '🍺 Alcohol & BP', key: 'alcohol' },
+      { label: '🥗 DASH diet explained', key: 'dash' },
+      { label: '🥑 Best foods for BP', key: 'foods' },
+      { label: '💊 BP medications — basics', key: 'meds' },
+      { label: '😴 Sleep & blood pressure', key: 'sleep' },
+      { label: '⚖️ Weight loss & BP', key: 'weight' },
+      { label: '🥤 Sugary drinks & BP', key: 'sugar' },
+      { label: '🧘 Meditation for BP', key: 'meditation' },
+      { label: '🚫 What raises BP?', key: 'raises' },
+      { label: '📈 White coat hypertension', key: 'whitecoat' },
+      { label: '📊 How often to check BP?', key: 'frequency' },
+      { label: '🧬 Genetics & BP', key: 'genetics' },
+      { label: '💧 Hydration & BP', key: 'hydration' },
+      { label: '🩺 Best BP monitor?', key: 'monitorbuy' },
+      { label: '🏥 Emergency BP numbers', key: 'emergency' }
+    ],
+    read: function() {
+      return { age: num('bp-age', 30), gender: toggle('bp-gender', 'male') };
+    },
+    build: function(i, kw) {
+      var sys = 120, dia = 80;
+      if (i.age >= 18 && i.gender === 'male') { sys = 110 + (i.age - 18) * 0.4; dia = 70 + (i.age - 18) * 0.2; }
+      else if (i.age >= 18) { sys = 105 + (i.age - 18) * 0.35; dia = 68 + (i.age - 18) * 0.15; }
+      sys = Math.round(sys); dia = Math.round(dia);
+
+      if (kw === 'range') return '❤️ BP Ranges\n\n• Normal: <120/80\n• Elevated: 120-129/<80\n• Stage 1: 130-139/80-89\n• Stage 2: 140+/90+\n\nYour recommended: ' + sys + '/' + dia;
+      if (kw === 'lower') return '📉 Lower BP\n\n• Sodium <2300mg/day\n• Exercise 150 min/week\n• Lose 5kg if overweight\n• Limit alcohol\n\n💡 10-20 mmHg drop possible.';
+      if (kw === 'monitor') return '📊 Home Monitoring\n\n• Same time daily\n• Sit 5 min before\n• Feet flat, arm at heart\n• 2 readings\n\n💡 Home > clinic.';
+      if (kw === 'lifestyle') return '🥗 Lifestyle\n\n• DASH diet\n• Potassium-rich foods\n• Omega-3\n• 7-9h sleep';
+      if (kw === 'salt') return '🧂 Salt\n\n• Ideal: <2300mg/day\n• Athletes: <3000mg\n\n💡 -1000mg = ~5 mmHg drop.';
+      if (kw === 'exercise') return '🏃 Exercise\n\n• Cardio: 150 min/week\n• Resistance: 2-3×/week\n\n💡 One workout = 24h lower BP.';
+      if (kw === 'stress') return responseStressCommon() + '\n\n📉 Stress = +10-15 mmHg.';
+      if (kw === 'coffee') return '☕ Coffee\n\n• Short-term: +5-10 mmHg\n• Habitual = tolerance\n\n💡 1-3 cups fine.';
+      if (kw === 'smoking') return '🚬 Smoking\n\n• +10-15 mmHg per cigarette\n\n💡 #1 preventable risk.';
+      if (kw === 'doctor') return '⚠️ See Doctor\n\n• BP >180/120\n• BP >140/90 consistently\n• Chest pain\n\n💡 Early detection saves lives.';
+      if (kw === 'alcohol') return '🍺 Alcohol\n\n• +1-2 mmHg per daily drink\n\n💡 Cutting back lowers BP.';
+      if (kw === 'dash') return '🥗 DASH Diet\n\n• Fruits + veggies\n• Whole grains\n• Lean protein\n• Nuts\n\n💡 -8 to -14 mmHg.';
+      if (kw === 'foods') return '🥑 Best Foods\n\n• Leafy greens\n• Bananas\n• Beetroot\n• Berries\n• Oats\n• Fatty fish\n\n💡 Whole foods > supplements.';
+      if (kw === 'meds') return '💊 Meds\n\n• ACE inhibitors\n• ARBs\n• Beta blockers\n\n💡 Prescribed only.';
+      if (kw === 'sleep') return responseSleepCommon() + '\n\n📉 Poor sleep = +5-10 mmHg.';
+      if (kw === 'weight') return '⚖️ Weight Loss\n\n• Every 1kg = -1 mmHg\n• 10kg overweight = -10 potential\n\n💡 Most powerful intervention.';
+      if (kw === 'sugar') return '🥤 Sugary Drinks\n\n• Each soda = +0.8 mmHg\n\n💡 Swap for water.';
+      if (kw === 'meditation') return '🧘 Meditation\n\n• 10-20 min daily = -3 to -5 mmHg\n\n💡 Stress reduction = BP reduction.';
+      if (kw === 'raises') return '🚫 Raises BP\n\n• High sodium\n• Alcohol\n• Smoking\n• Stress\n• Poor sleep\n• Sedentary';
+      if (kw === 'whitecoat') return '📈 White Coat\n\n• High only at doctor\n\n💡 Home readings reveal truth.';
+      if (kw === 'frequency') return '📊 Frequency\n\n• Healthy: 6-12 months\n• Elevated: Daily\n• Hypertensive: 1-2× daily';
+      if (kw === 'genetics') return '🧬 Genetics\n\n• Family history = 2-4× risk\n\n💡 Lifestyle still dominates.';
+      if (kw === 'hydration') return responseHydrationCommon(i) + '\n\n❤️ Balance matters.';
+      if (kw === 'monitorbuy') return '🩺 Best Monitors\n\n• Omron\n• Withings BPM\n• QardioArm\n\nLook for upper arm cuff.\n\nBudget: $40-100';
+      if (kw === 'emergency') return '🏥 Emergency\n\n• BP >180/120\n• Chest pain\n• Severe headache\n• Numbness\n\n💡 Hypertensive crisis.';
+      return 'Cardio-Vascular Monitor ready.';
+    }
+  }
+};
+
+function processExpertSystemQuery(botKey, questionKey) {
+  var rules = EXPERT_RULES[botKey];
+  if (!rules) return 'No expert system for "' + botKey + '".';
+  var inputs = rules.read();
+  return rules.build(inputs, questionKey);
+}
+
+function pageIdToBotKey(pageId) {
+  var map = { fitness: 'fitnessAI', nutrition: 'nutritionAI', recovery: 'recoveryAI', hydro: 'hydroAI', calo: 'caloAI', sleep: 'sleepAI', posture: 'postureAI', steps: 'stepsAI', bp: 'bpAI' };
+  return map[pageId] || null;
+}
+
+// =============================================
+// THEME
+// =============================================
+function toggleTheme() {
+  var html = document.documentElement;
+  var icon = document.getElementById('themeIcon');
+  if (html.getAttribute('data-theme') === 'light') {
+    html.removeAttribute('data-theme');
+    icon.textContent = '🌙';
+    try { localStorage.setItem('healthofy-theme', 'dark'); } catch(e) {}
+  } else {
+    html.setAttribute('data-theme', 'light');
+    icon.textContent = '☀️';
+    try { localStorage.setItem('healthofy-theme', 'light'); } catch(e) {}
+  }
+}
+function loadTheme() {
+  try {
+    var t = localStorage.getItem('healthofy-theme');
+    var icon = document.getElementById('themeIcon');
+    if (t === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      icon.textContent = '☀️';
+    }
+  } catch(e) {}
+}
+
+function toggleDrawer() {
+  var drawer = document.getElementById('sideDrawer');
+  var backdrop = document.getElementById('drawerBackdrop');
+  var btn = document.getElementById('menuToggle');
+  var isOpen = drawer.classList.contains('open');
+  if (isOpen) {
+    drawer.classList.remove('open');
+    drawer.setAttribute('aria-hidden', 'true');
+    backdrop.classList.remove('show');
+    btn.classList.remove('active');
+  } else {
+    drawer.classList.add('open');
+    drawer.setAttribute('aria-hidden', 'false');
+    backdrop.classList.add('show');
+    btn.classList.add('active');
+  }
+}
+
+var currentPage = 'home';
+function showPage(id) {
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+  var target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  var items = document.querySelectorAll('.drawer-item');
+  for (var j = 0; j < items.length; j++) {
+    if (items[j].getAttribute('data-page') === id) items[j].classList.add('active');
+    else items[j].classList.remove('active');
+  }
+  var drawer = document.getElementById('sideDrawer');
+  if (drawer.classList.contains('open')) toggleDrawer();
+  window.scrollTo(0, 0);
+  currentPage = id;
+  if (pageIdToBotKey(id)) {
+    document.getElementById('chatFab').classList.add('show');
+  } else {
+    document.getElementById('chatFab').classList.remove('show');
+    if (document.getElementById('chatPanel').classList.contains('open')) closeChat();
+  }
+  if (id === 'hydro') updateHydro();
+  if (id === 'calo') updateCalo();
+}
+
+function getToggleValue(groupId) {
+  var group = document.getElementById(groupId);
+  if (!group) return null;
+  var active = group.querySelector('.unit-btn.active');
+  return active ? active.getAttribute('data-val') : null;
+}
+
+function setupToggles() {
+  var groups = document.querySelectorAll('.unit-switch');
+  for (var i = 0; i < groups.length; i++) {
+    (function(group) {
+      var btns = group.querySelectorAll('.unit-btn');
+      for (var j = 0; j < btns.length; j++) {
+        btns[j].addEventListener('click', function() {
+          for (var k = 0; k < btns.length; k++) btns[k].classList.remove('active');
+          this.classList.add('active');
+          var page = group.closest('.page');
+          if (page) {
+            if (page.id === 'hydro') updateHydro();
+            if (page.id === 'calo') updateCalo();
+          }
+        });
+      }
+    })(groups[i]);
+  }
+}
+
+// =============================================
+// CALCULATORS
+// =============================================
+function updateHydro() {
+  var w = parseFloat(document.getElementById('hydro-weight').value) || 70;
+  var h = parseFloat(document.getElementById('hydro-height').value) || 170;
+  var ex = parseFloat(document.getElementById('hydro-exercise').value) || 0;
+  var age = parseFloat(document.getElementById('hydro-age').value) || 30;
+  document.getElementById('hydro-exercise-val').textContent = ex + ' min';
+  document.getElementById('hydro-age-val').textContent = age + ' years';
+  var g = getToggleValue('hydro-gender');
+  var wKg = toKg(w, units.hydro.weight);
+  var hCm = toCm(h, units.hydro.height);
+  var water = wKg * 0.033 + (hCm - 150) * 0.015 + ex * 0.012;
+  water *= (g === 'm') ? 1.1 : 0.95;
+  if (age > 30) water *= 0.97;
+  water = Math.max(1.5, Math.min(5, water));
+  document.getElementById('hydro-result').textContent = water.toFixed(1);
+}
+
+function updateCalo() {
+  var w = parseFloat(document.getElementById('calo-weight').value) || 70;
+  var h = parseFloat(document.getElementById('calo-height').value) || 170;
+  var age = parseFloat(document.getElementById('calo-age').value) || 30;
+  document.getElementById('calo-age-val').textContent = age + ' years';
+  var g = getToggleValue('calo-gender');
+  var a = getToggleValue('calo-activity');
+  var wKg = toKg(w, units.calo.weight);
+  var hCm = toCm(h, units.calo.height);
+  var bmr = (g === 'male') ? (10 * wKg) + (6.25 * hCm) - (5 * age) + 5 : (10 * wKg) + (6.25 * hCm) - (5 * age) - 161;
+  var mult = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very: 1.9 };
+  var tdee = bmr * (mult[a] || 1.55);
+  var min = (g === 'male') ? 1500 : 1200;
+  var lose = Math.max(min, tdee - 500);
+  document.getElementById('calo-result').textContent = Math.round(tdee);
+  document.getElementById('calo-maintain').textContent = Math.round(tdee);
+  document.getElementById('calo-lose').textContent = Math.round(lose);
+}
+
+function calculateStamina() {
+  var g = getToggleValue('stamina-gender');
+  var age = parseFloat(document.getElementById('stamina-age').value);
+  var w = parseFloat(document.getElementById('stamina-weight').value);
+  var h = parseFloat(document.getElementById('stamina-height').value);
+  if (!age || !w || !h) { alert('Fill all fields'); return; }
+  var wKg = toKg(w, units.stamina.weight);
+  var hCm = toCm(h, units.stamina.height);
+  var bmi = wKg / Math.pow(hCm / 100, 2);
+  var time = 300;
+  time += (g === 'male') ? -30 : 30;
+  if (bmi > 25) time += (bmi - 25) * 5;
+  else if (bmi < 18.5) time += (18.5 - bmi) * 3;
+  if (age > 40) time += (age - 40) * 2;
+  else if (age < 20) time -= (20 - age) * 1.5;
+  time = Math.max(180, Math.min(600, time));
+  var m = Math.floor(time / 60);
+  var s = Math.round(time % 60);
+  document.getElementById('stamina-result').textContent = m + ':' + (s < 10 ? '0' + s : s);
+}
+
+function calculateBMI() {
+  var w = parseFloat(document.getElementById('bmi-weight').value);
+  var h = parseFloat(document.getElementById('bmi-height').value);
+  if (!w || !h) return;
+  var wKg = toKg(w, units.bmi.weight);
+  var hCm = toCm(h, units.bmi.height);
+  var bmi = Math.round((wKg / Math.pow(hCm / 100, 2)) * 10) / 10;
+  document.getElementById('bmi-result').textContent = bmi;
+  var cat = document.getElementById('bmi-category');
+  if (bmi < 18.5) { cat.textContent = 'Underweight'; cat.style.color = '#00E5FF'; }
+  else if (bmi < 25) { cat.textContent = 'Normal Weight'; cat.style.color = '#00D4FF'; }
+  else if (bmi < 30) { cat.textContent = 'Overweight'; cat.style.color = '#4361EE'; }
+  else { cat.textContent = 'Obese'; cat.style.color = '#FF4444'; }
+}
+
+function calculateBP() {
+  var g = getToggleValue('bp-gender');
+  var age = parseFloat(document.getElementById('bp-age').value);
+  if (!age) return;
+  var sys, dia;
+  if (age < 13) { sys = 90 + age * 2; dia = 60 + age * 1.5; }
+  else if (age < 18) { sys = 105 + (age - 13) * 1.5; dia = 70 + (age - 13); }
+  else if (g === 'male') { sys = 110 + (age - 18) * 0.4; dia = 70 + (age - 18) * 0.2; }
+  else { sys = 105 + (age - 18) * 0.35; dia = 68 + (age - 18) * 0.15; }
+  document.getElementById('bp-result').textContent = Math.round(sys) + '/' + Math.round(dia);
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function fmt12(h, m) {
+  var ap = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12; if (h12 === 0) h12 = 12;
+  return h12 + ':' + pad(m) + ' ' + ap;
+}
+function shiftTime(h, m, delta) {
+  var total = h * 60 + m + delta;
+  total = ((total % 1440) + 1440) % 1440;
+  return fmt12(Math.floor(total / 60), total % 60);
+}
+function calculateSleep() {
+  var age = parseFloat(document.getElementById('sleep-age').value);
+  var wake = document.getElementById('sleep-wake').value;
+  if (!age || !wake) return;
+  var minS, maxS;
+  if (age < 13) { minS = 9; maxS = 12; }
+  else if (age < 18) { minS = 8; maxS = 10; }
+  else if (age < 65) { minS = 7; maxS = 9; }
+  else { minS = 7; maxS = 8; }
+  document.getElementById('sleep-hours').textContent = minS + '-' + maxS;
+  var parts = wake.split(':');
+  var wH = parseInt(parts[0]);
+  var wM = parseInt(parts[1]);
+  var buffer = 15;
+  var opts = [{ h: 9.0, l: '6 cycles' }, { h: 7.5, l: '5 cycles' }, { h: 6.0, l: '4 cycles' }];
+  var html = '<b>Optimal bedtimes for ' + wake + ' wake:</b><br><br><div class="sleep-cycles-grid">';
+  for (var i = 0; i < opts.length; i++) {
+    if (opts[i].h >= minS - 0.5) {
+      var bt = shiftTime(wH, wM, -(Math.round(opts[i].h * 60) + buffer));
+      html += '<div class="sleep-cycle-option"><span class="sleep-cycle-time">' + bt + '</span><span class="sleep-cycle-meta">' + opts[i].l + ' • ' + opts[i].h + 'h</span></div>';
+    }
+  }
+  html += '</div><br><i>Includes 15-min fall-asleep buffer.</i>';
+  document.getElementById('sleep-note').innerHTML = html;
+}
+
+function calculatePosture() {
+  var type = document.getElementById('posture-type').value;
+  var hrs = parseFloat(document.getElementById('posture-hours').value);
+  document.getElementById('posture-hours-val').textContent = hrs + ' hours';
+  var tips = '';
+  if (type === 'forward') tips = '• Chin tucks: 10 reps, 3x daily<br>• Wall angels: 10 reps, 2 sets<br>• Upper trap stretch: 20s<br>• Screen at eye level';
+  else if (type === 'rounded') tips = '• Scapular retractions: 15 reps<br>• Doorway chest stretch: 30s<br>• Rows with band<br>• Lumbar support';
+  else if (type === 'anterior') tips = '• Glute bridges: 15 reps<br>• Hip flexor stretch: 30s<br>• Planks: 30-60s<br>• Engage core';
+  else tips = '• Phone at eye level<br>• Chin tucks hourly<br>• Neck stretches<br>• Tech break 20 min';
+  if (hrs > 6) tips += '<br>• Break every 30 minutes';
+  document.getElementById('posture-result').innerHTML = tips;
+}
+
+function calculateRecovery() {
+  var type = document.getElementById('injury-type').value;
+  var days = parseFloat(document.getElementById('injury-days').value);
+  var pain = parseFloat(document.getElementById('pain-level').value);
+  document.getElementById('injury-days-val').textContent = days + ' days';
+  document.getElementById('pain-level-val').textContent = pain + '/10';
+  var stage = days <= 2 ? 'Acute Phase' : days <= 7 ? 'Sub-Acute Phase' : 'Rehabilitation Phase';
+  var plan = [], sprays = [];
+  if (type === 'sprain') { plan = ['RICE Method', 'Ice 15-20 min every 2-3h', 'Compression wrap', 'Gentle ROM']; sprays = ['Diclofenac gel', 'Menthol spray', 'Arnica gel']; }
+  else if (type === 'strain') { plan = ['Rest 24-48h', 'Ice 15-20 min', 'Gentle stretching', 'Gradual return']; sprays = ['Bengay', 'CBD cream', 'Magnesium oil']; }
+  else if (type === 'knee') { plan = ['Rest', 'Ice 15-20 min', 'Quad strengthening', 'Knee brace']; sprays = ['Topical NSAID gel', 'Capsaicin cream', 'Glucosamine']; }
+  else if (type === 'back') { plan = ['Gentle activity', 'Heat or ice', 'Hamstring stretch', 'Core work']; sprays = ['Menthol spray', 'Capsaicin cream', 'Lidocaine']; }
+  else if (type === 'shoulder') { plan = ['Immobilize if needed', 'Ice 15-20 min', 'Pendulum exercises', 'Avoid overhead']; sprays = ['Topical NSAID', 'Menthol spray', 'CBD cream']; }
+  else { plan = ['Dark quiet room', 'Hydrate', 'Cold compress', 'Deep breathing']; sprays = ['Peppermint oil', 'Lavender', 'Magnesium oil']; }
+  var sev = pain <= 3 ? 'Mild' : pain <= 7 ? 'Moderate' : 'Severe';
+  var sevClass = pain <= 3 ? 'severity-mild' : pain <= 7 ? 'severity-moderate' : 'severity-severe';
+  document.getElementById('recovery-assessment').innerHTML = '<h5>📊 Recovery Stage: ' + stage + '</h5><p>Your ' + sev.toLowerCase() + ' injury is in the ' + stage + '.</p><div class="progress-bar"><div class="progress-fill" style="width: ' + (days <= 2 ? 10 : days <= 7 ? 30 : 60) + '%"></div></div><span class="severity-badge ' + sevClass + '">Pain: ' + sev + ' (' + pain + '/10)</span>';
+  var planList = document.getElementById('recovery-plan-list');
+  planList.innerHTML = '';
+  plan.forEach(function(p) { planList.innerHTML += '<li>✓ ' + p + '</li>'; });
+  var sprayList = document.getElementById('spray-list');
+  sprayList.innerHTML = '';
+  sprays.forEach(function(s) { sprayList.innerHTML += '<li>🧴 ' + s + '</li>'; });
+}
+
+function calculateSteps() {
+  var age = parseFloat(document.getElementById('steps-age').value);
+  var w = parseFloat(document.getElementById('steps-weight').value);
+  var h = parseFloat(document.getElementById('steps-height').value);
+  var g = getToggleValue('steps-gender');
+  var goal = getToggleValue('steps-goal');
+  if (!age || !w || !h) return;
+  var wKg = toKg(w, units.steps.weight);
+  var hCm = toCm(h, units.steps.height);
+  var steps = 5000;
+  if (age < 18) steps = 10000;
+  else if (age < 40) steps = 8000;
+  else if (age < 65) steps = 7000;
+  else steps = 6000;
+  var bmi = wKg / Math.pow(hCm / 100, 2);
+  if (bmi > 30) steps += 2000;
+  else if (bmi > 25) steps += 1000;
+  if (goal === 'weight') steps += 2500;
+  else if (goal === 'fitness') steps += 1500;
+  if (g === 'female') steps += 500;
+  steps = Math.max(4000, Math.min(15000, steps));
+  document.getElementById('steps-result').textContent = Math.round(steps);
+  document.getElementById('steps-recommendation').innerHTML = 'Based on age ' + age + ', BMI ' + bmi.toFixed(1) + ', we recommend ' + Math.round(steps) + ' steps daily.';
+}
+
+function calculateNutrition() {
+  var age = parseFloat(document.getElementById('nutrition-age').value);
+  var w = parseFloat(document.getElementById('nutrition-weight').value);
+  var h = parseFloat(document.getElementById('nutrition-height').value);
+  var g = getToggleValue('nutrition-gender');
+  var act = getToggleValue('nutrition-activity');
+  var goal = getToggleValue('nutrition-goal');
+  if (!age || !w || !h) return;
+  var wKg = toKg(w, units.nutrition.weight);
+  var hCm = toCm(h, units.nutrition.height);
+  var bmr = (g === 'male') ? (10 * wKg) + (6.25 * hCm) - (5 * age) + 5 : (10 * wKg) + (6.25 * hCm) - (5 * age) - 161;
+  var mult = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very: 1.9 };
+  var tdee = bmr * (mult[act] || 1.55);
+  var cal = tdee;
+  if (goal === 'lose') cal = tdee - 500;
+  else if (goal === 'gain') cal = tdee + 300;
+  var min = (g === 'male') ? 1500 : 1200;
+  var max = (g === 'male') ? 4000 : 3500;
+  cal = Math.max(min, Math.min(max, Math.round(cal)));
+  var lbm = (g === 'male') ? (0.407 * wKg + 0.267 * hCm - 19.2) : (0.252 * wKg + 0.473 * hCm - 48.3);
+  var protMult = (goal === 'lose') ? 2.2 : (goal === 'gain') ? 2.0 : 1.8;
+  var protein = Math.round(lbm * protMult);
+  if (protein < 40) protein = 40;
+  var protCal = protein * 4;
+  if (protCal > cal * 0.4) { protCal = cal * 0.4; protein = Math.round(protCal / 4); }
+  var remain = cal - protCal;
+  var carbs = Math.round((remain * 0.5) / 4);
+  var fats = Math.round((remain * 0.5) / 9);
+
+  document.getElementById('nutrition-assessment-text').innerHTML = 'Daily target: <b>' + cal + ' kcal</b>. Protein floor: <b>' + protein + 'g</b> (from LBM ~' + Math.round(lbm) + 'kg × ' + protMult + 'g/kg).';
+
+  var maxVal = Math.max(protein, carbs, fats, 1);
+  var rings = [
+    { id: 'ring-protein', r: 80, val: protein },
+    { id: 'ring-carbs', r: 62, val: carbs },
+    { id: 'ring-fats', r: 44, val: fats }
+  ];
+  rings.forEach(function(ring) {
+    var el = document.getElementById(ring.id);
+    if (!el) return;
+    var circ = 2 * Math.PI * ring.r;
+    el.style.strokeDasharray = circ;
+    el.style.strokeDashoffset = circ * (1 - Math.min(1, ring.val / maxVal));
+  });
+  document.getElementById('rings-calories').textContent = cal;
+  document.getElementById('legend-protein').textContent = protein + 'g';
+  document.getElementById('legend-carbs').textContent = carbs + 'g';
+  document.getElementById('legend-fats').textContent = fats + 'g';
+}
+
+// FITNESS - full workout cards
+var EXERCISE_DB = {
+  Strength: {
+    Beginner: { Upper: ['Push-ups (knee)', 'Dumbbell Rows', 'Overhead Press', 'Bicep Curls', 'Tricep Dips'], Lower: ['Bodyweight Squats', 'Lunges', 'Glute Bridges', 'Calf Raises', 'Step-ups'], Core: ['Planks', 'Dead Bug', 'Bird Dog', 'Russian Twists'] },
+    Intermediate: { Upper: ['Push-ups', 'Pull-ups (assisted)', 'Dumbbell Bench Press', 'Bent Over Rows', 'Shoulder Press', 'Hammer Curls'], Lower: ['Goblet Squats', 'Walking Lunges', 'Romanian Deadlifts', 'Box Jumps', 'Bulgarian Split Squats'], Core: ['Plank Variations', 'Hanging Leg Raises', 'Ab Wheel Rollouts', 'Side Planks'] },
+    Advanced: { Upper: ['Weighted Push-ups', 'Muscle-ups', 'Barbell Bench Press', 'T-Bar Rows', 'Arnold Press', 'Skull Crushers'], Lower: ['Barbell Squats', 'Pistol Squats', 'Deadlifts', 'Box Squats', 'Nordic Curls'], Core: ['Dragon Flags', 'L-sit', 'Windshield Wipers', 'Ab Rollouts'] }
+  },
+  Cardio: {
+    Beginner: { Steady: ['Brisk Walking', 'Stationary Cycling', 'Swimming', 'Elliptical', 'Rowing Machine'], High: ['Jumping Jacks', 'High Knees', 'Butt Kicks', 'Mountain Climbers'] },
+    Intermediate: { Steady: ['Jogging', 'Cycling', 'Swimming Laps', 'Rowing Intervals', 'Stair Climber'], High: ['Jump Squats', 'Lunge Jumps', 'Burpees', 'Box Jumps', 'Kettlebell Swings'] },
+    Advanced: { Steady: ['Distance Running', 'Spin Class', 'Swim Sprints', 'Rowing Sprints', 'Assault Bike'], High: ['Plyometric Circuit', 'Battle Ropes', 'Sled Pushes', 'Tire Flips'] }
+  },
+  Flexibility: {
+    Beginner: { Upper: ['Neck Rolls', 'Shoulder Shrugs', 'Arm Circles', 'Chest Stretch'], Lower: ['Hamstring Stretch', 'Quad Stretch', 'Hip Flexor Stretch', 'Calf Stretch'], Full: ["Cat-Cow", "Child's Pose", 'Downward Dog', 'Forward Fold'] },
+    Intermediate: { Upper: ['Eagle Arms', 'Cow Face Arms', 'Thread the Needle', 'Camel Pose'], Lower: ['Pigeon Pose', 'Lizard Pose', 'Half Split', 'Dragon Pose'], Full: ['Sun Salutations', 'Warrior Flow', 'Triangle Pose', 'Half Moon'] },
+    Advanced: { Upper: ['King Pigeon Arms', 'Full Wheel', 'Scorpion Pose', 'Compass Pose'], Lower: ['Splits (Front)', 'Splits (Side)', 'King Pigeon', 'Monkey Pose'], Full: ['Ashtanga Flow', 'Handstand Practice', 'Bakasana', 'Full Lotus'] }
+  },
+  Hybrid: {
+    Beginner: { Upper: ['Push-ups (knee)', 'Dumbbell Rows', 'Jumping Jacks', 'Mountain Climbers'], Lower: ['Bodyweight Squats', 'Lunges', 'High Knees', 'Glute Bridges'], Core: ['Planks', 'Russian Twists', 'Dead Bug', 'Bird Dog'] },
+    Intermediate: { Upper: ['Push-ups', 'Pull-ups', 'Dumbbell Bench Press', 'Bent Over Rows', 'Burpees'], Lower: ['Goblet Squats', 'Walking Lunges', 'Box Jumps', 'Kettlebell Swings'], Core: ['Plank Variations', 'Hanging Leg Raises', 'Ab Wheel Rollouts', 'Mountain Climbers'] },
+    Advanced: { Upper: ['Weighted Push-ups', 'Muscle-ups', 'Barbell Bench Press', 'T-Bar Rows', 'Burpee Pull-ups'], Lower: ['Barbell Squats', 'Deadlifts', 'Box Squats', 'Plyometric Lunges'], Core: ['Dragon Flags', 'L-sit', 'Windshield Wipers', 'Hollow Body Holds'] }
+  }
+};
+
+function getSetsReps(level) {
+  return { Beginner: { sets: 2, reps: '10-12', rest: '60s' }, Intermediate: { sets: 3, reps: '10-15', rest: '45s' }, Advanced: { sets: 4, reps: '8-12', rest: '30s' } }[level] || { sets: 2, reps: '10-12', rest: '60s' };
+}
+
+function calculateFitness() {
+  var age = parseFloat(document.getElementById('fitness-age').value) || 25;
+  var gender = getToggleValue('fitness-gender');
+  var level = getToggleValue('fitness-level') || 'Beginner';
+  var goal = getToggleValue('fitness-goal') || 'Strength';
+  var days = parseFloat(document.getElementById('fitness-days').value) || 3;
+  document.getElementById('fitness-days-val').textContent = days + ' days/week';
+
+  var ageGroup = age < 18 ? 'Youth' : age < 40 ? 'Adult' : age < 60 ? 'Middle-Aged' : 'Senior';
+  var config = getSetsReps(level);
+  var levelData = (EXERCISE_DB[goal] && EXERCISE_DB[goal][level]) || EXERCISE_DB.Strength.Beginner;
+
+  var types = [];
+  if (goal === 'Strength') types = ['Upper Body', 'Lower Body', 'Core & Accessory'];
+  else if (goal === 'Cardio') types = ['Steady State', 'High Intensity', 'Interval'];
+  else if (goal === 'Flexibility') types = ['Upper Body', 'Lower Body', 'Full Body Flow'];
+  else types = ['Strength + Cardio', 'Cardio + Core', 'Full Body Circuit'];
+
+  var dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var weekPlan = [];
+  var totalEx = 0, totalDur = 0;
+
+  for (var i = 0; i < days; i++) {
+    var type = types[i % types.length];
+    var ex = [];
+    if (type.indexOf('Upper') >= 0) ex = (levelData.Upper || []).slice(0, 4);
+    else if (type.indexOf('Lower') >= 0) ex = (levelData.Lower || []).slice(0, 4);
+    else if (type.indexOf('Core') >= 0) ex = (levelData.Core || []).slice(0, 4);
+    else if (type.indexOf('Steady') >= 0 || type.indexOf('Interval') >= 0) ex = (levelData.Steady || levelData.High || []).slice(0, 4);
+    else ex = [].concat(levelData.Upper || [], levelData.Lower || [], levelData.Core || []).slice(0, 5);
+    if (ex.length === 0) ex = ['Bodyweight Squats', 'Push-ups', 'Planks', 'Lunges'];
+
+    var details = ex.map(function(e) { return { name: e, detail: config.sets + ' x ' + config.reps }; });
+    var dur = 20 + ex.length * 3;
+    totalDur += dur;
+    weekPlan.push({ day: dayNames[i], type: type, exercises: details, duration: dur });
+    totalEx += ex.length;
+  }
+  if (days < 6) {
+    weekPlan.push({ day: 'Rest Days', type: 'Active Recovery', exercises: [{ name: 'Light walking', detail: '15-20 min' }, { name: 'Hydration & nutrition', detail: '' }, { name: 'Quality sleep', detail: '7-9 hours' }], duration: 20, isRest: true });
+  }
+  var avgDur = Math.round(totalDur / days);
+
+  document.getElementById('stat-days').textContent = weekPlan.filter(function(d) { return !d.isRest; }).length;
+  document.getElementById('stat-exercises').textContent = totalEx;
+  document.getElementById('stat-duration').textContent = avgDur + 'min';
+  document.getElementById('stat-level').textContent = level;
+  document.getElementById('fitness-assessment-text').textContent = 'Based on your profile (' + ageGroup + ', ' + level + ', ' + goal + '), here is your ' + days + '-day plan.';
+  document.getElementById('fitness-result-label').textContent = ageGroup + ' ' + goal + ' Plan — ' + level;
+
+  var container = document.getElementById('workout-plan-container');
+  container.innerHTML = '';
+  weekPlan.forEach(function(day) {
+    var d = document.createElement('div');
+    d.className = 'workout-day';
+    var icon = '📅';
+    if (day.isRest) icon = '🛌';
+    else if (day.type.indexOf('Upper') >= 0) icon = '⬆️';
+    else if (day.type.indexOf('Lower') >= 0) icon = '⬇️';
+    else if (day.type.indexOf('Cardio') >= 0 || day.type.indexOf('Steady') >= 0 || day.type.indexOf('Intensity') >= 0) icon = '❤️';
+    else if (day.type.indexOf('Core') >= 0) icon = '🎯';
+    else if (day.type.indexOf('Full') >= 0) icon = '👥';
+    else if (day.type.indexOf('Hybrid') >= 0) icon = '⚡';
+
+    var exHtml = '';
+    day.exercises.forEach(function(e) {
+      exHtml += '<li>✓ ' + e.name + (e.detail ? '<span class="exercise-detail">' + e.detail + '</span>' : '') + '</li>';
+    });
+    d.innerHTML = '<h5>' + icon + ' ' + day.day + ' — ' + (day.isRest ? '🔄 Active Recovery' : day.type) + (!day.isRest ? '<span class="workout-type">' + config.sets + ' sets</span>' : '') + (!day.isRest ? '<span class="workout-type" style="margin-left:5px;">' + day.duration + 'min</span>' : '') + '</h5><ul>' + exHtml + '</ul>';
+    container.appendChild(d);
+  });
+
+  var note = ageGroup === 'Youth' ? 'Focus on fundamental movement skills. Prioritize proper form.' :
+             ageGroup === 'Adult' ? 'Balance strength with cardio. Consistency + progressive overload.' :
+             ageGroup === 'Middle-Aged' ? 'Prioritize joint health, mobility, functional strength.' :
+             'Maintain mobility and balance. Listen to your body.';
+  if (goal === 'Strength') note += ' Increase weight or reps gradually.';
+  else if (goal === 'Cardio') note += ' Gradually increase duration or intensity.';
+  document.getElementById('plan-note-text').textContent = note;
+}
+
+// COPY PLAN
+function copyPlan(type) {
+  var btnId = type === 'fitness' ? 'copy-fitness-btn' : 'copy-recovery-btn';
+  var btn = document.getElementById(btnId);
+  if (!btn) return;
+  var orig = btn.innerHTML;
+  var text = '';
+  if (type === 'fitness') {
+    text = '🏋️ Workout Plan\n\n';
+    document.querySelectorAll('#workout-plan-container .workout-day').forEach(function(day) {
+      var title = day.querySelector('h5');
+      text += '── ' + (title ? title.textContent.replace(/\s+/g, ' ').trim() : '') + ' ──\n';
+      day.querySelectorAll('li').forEach(function(li) {
+        text += '  • ' + li.textContent.replace(/\s+/g, ' ').trim() + '\n';
+      });
+      text += '\n';
+    });
+    text += '— Generated by Healthofy AI';
+  } else {
+    text = '🩹 Recovery Plan\n\n';
+    var assess = document.querySelector('#recovery-assessment');
+    if (assess) text += assess.textContent.replace(/\s+/g, ' ').trim() + '\n\n';
+    text += '── Treatment ──\n';
+    document.querySelectorAll('#recovery-plan-list li').forEach(function(li) {
+      text += '  • ' + li.textContent.trim() + '\n';
+    });
+    text += '\n── Recommended Spray ──\n';
+    document.querySelectorAll('#spray-list li').forEach(function(li) {
+      text += '  • ' + li.textContent.trim() + '\n';
+    });
+    text += '\n— Generated by Healthofy AI';
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.classList.add('copied');
+      btn.innerHTML = '✓ Copied!';
+      setTimeout(function() { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1600);
+    }).catch(function() { fallbackCopy(text, btn, orig); });
+  } else {
+    fallbackCopy(text, btn, orig);
+  }
+}
+function fallbackCopy(text, btn, orig) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  btn.classList.add('copied');
+  btn.innerHTML = '✓ Copied!';
+  setTimeout(function() { btn.classList.remove('copied'); btn.innerHTML = orig; }, 1600);
+}
+
+// =============================================
+// CHATBOT
+// =============================================
+var currentBot = null;
+var currentThread = [];
+
+function scrapeContext(botKey) {
+  var bot = EXPERT_RULES[botKey];
+  if (!bot) return {};
+  try { return bot.read(); } catch(e) { return {}; }
+}
+function formatContext(ctx) {
+  var parts = [];
+  for (var key in ctx) if (ctx[key] !== undefined && ctx[key] !== null && ctx[key] !== '') parts.push(key + ': ' + ctx[key]);
+  return parts.length ? parts.join(' | ') : 'no data yet';
+}
+
+function openChat() {
+  var botKey = pageIdToBotKey(currentPage);
+  if (!botKey) return;
+  currentBot = botKey;
+  var bot = EXPERT_RULES[botKey];
+  document.getElementById('chatTitle').textContent = bot.title;
+  document.getElementById('chatPanel').classList.add('open');
+  document.getElementById('chatPanel').setAttribute('aria-hidden', 'false');
+
+  var ctx = scrapeContext(botKey);
+  document.getElementById('contextPillText').textContent = formatContext(ctx);
+
+  var key = 'healthofy_chat_' + botKey;
+  try { var saved = localStorage.getItem(key); currentThread = saved ? JSON.parse(saved) : []; }
+  catch(e) { currentThread = []; }
+
+  if (currentThread.length === 0) currentThread.push({ role: 'bot', text: bot.greeting });
+  renderThread();
+  renderQuestions(bot.questions || []);
+}
+
+function closeChat() {
+  document.getElementById('chatPanel').classList.remove('open');
+  document.getElementById('chatPanel').setAttribute('aria-hidden', 'true');
+  if (currentBot) {
+    try { localStorage.setItem('healthofy_chat_' + currentBot, JSON.stringify(currentThread)); } catch(e) {}
+  }
+}
+
+function renderThread() {
+  var body = document.getElementById('chatBody');
+  body.innerHTML = '';
+  for (var i = 0; i < currentThread.length; i++) {
+    var m = currentThread[i];
+    var div = document.createElement('div');
+    div.className = 'chat-bubble ' + (m.role === 'user' ? 'user' : 'bot');
+    div.textContent = m.text;
+    body.appendChild(div);
+  }
+  body.scrollTop = body.scrollHeight;
+}
+
+function renderQuestions(questions) {
+  var wrap = document.getElementById('chatChips');
+  wrap.innerHTML = '';
+  for (var i = 0; i < questions.length; i++) {
+    (function(q) {
+      var b = document.createElement('button');
+      b.className = 'chip';
+      b.textContent = q.label;
+      b.onclick = function() { askQuestion(q); };
+      wrap.appendChild(b);
+    })(questions[i]);
+  }
+}
+
+function disableChips(disabled) {
+  var chips = document.querySelectorAll('#chatChips .chip');
+  for (var i = 0; i < chips.length; i++) chips[i].disabled = disabled;
+}
+
+function askQuestion(q) {
+  if (!currentBot) return;
+  currentThread.push({ role: 'user', text: q.label });
+  renderThread();
+  try { localStorage.setItem('healthofy_chat_' + currentBot, JSON.stringify(currentThread)); } catch(e) {}
+  disableChips(true);
+  var typing = document.getElementById('chatTyping');
+  typing.classList.add('show');
+  var body = document.getElementById('chatBody');
+  body.scrollTop = body.scrollHeight;
+  setTimeout(function() {
+    typing.classList.remove('show');
+    var reply = processExpertSystemQuery(currentBot, q.key);
+    currentThread.push({ role: 'bot', text: reply });
+    renderThread();
+    try { localStorage.setItem('healthofy_chat_' + currentBot, JSON.stringify(currentThread)); } catch(e) {}
+    disableChips(false);
+  }, 400);
+}
+
+// =============================================
+// LIVE INPUTS
+// =============================================
+function setupLiveInputs() {
+  var ids = ['hydro-weight','hydro-height','hydro-exercise','hydro-age','calo-weight','calo-height','calo-age','bmi-weight','bmi-height','steps-weight','steps-height','nutrition-weight','nutrition-height'];
+  for (var i = 0; i < ids.length; i++) {
+    (function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', function() {
+        if (id.indexOf('hydro') === 0) updateHydro();
+        else if (id.indexOf('calo') === 0) updateCalo();
+        else if (id.indexOf('bmi') === 0) calculateBMI();
+        else if (id.indexOf('steps') === 0) calculateSteps();
+        else if (id.indexOf('nutrition') === 0) calculateNutrition();
+      });
+    })(ids[i]);
+  }
+  var ids2 = ['posture-hours','injury-days','pain-level','fitness-days'];
+  for (var j = 0; j < ids2.length; j++) {
+    (function(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', function() {
+        var v = el.value;
+        if (id === 'posture-hours') document.getElementById('posture-hours-val').textContent = v + ' hours';
+        if (id === 'injury-days') document.getElementById('injury-days-val').textContent = v + ' days';
+        if (id === 'pain-level') document.getElementById('pain-level-val').textContent = v + '/10';
+        if (id === 'fitness-days') document.getElementById('fitness-days-val').textContent = v + ' days/week';
+      });
+    })(ids2[j]);
+  }
+}
+
+function createParticles() {
+  var container = document.getElementById('particles');
+  for (var i = 0; i < 40; i++) {
+    var p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDelay = Math.random() * 15 + 's';
+    p.style.animationDuration = (12 + Math.random() * 15) + 's';
+    container.appendChild(p);
+  }
+}
+
+function setupToolCardMouse() {
+  var cards = document.querySelectorAll('.tool-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('mousemove', function(e) {
+      var r = this.getBoundingClientRect();
+      this.style.setProperty('--x', (e.clientX - r.left) + 'px');
+      this.style.setProperty('--y', (e.clientY - r.top) + 'px');
+    });
+  }
+}
+
+// PWA
+var deferredPrompt = null;
+function setupPWA() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./service-worker.js').catch(function(){});
+    });
+  }
+  window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(function() {
+      var toast = document.getElementById('pwaToast');
+      if (toast && !window.matchMedia('(display-mode: standalone)').matches) toast.classList.add('show');
+    }, 3000);
+  });
+  window.addEventListener('appinstalled', function() {
+    var toast = document.getElementById('pwaToast');
+    if (toast) toast.classList.remove('show');
+  });
+  var installBtn = document.getElementById('pwaInstallBtn');
+  if (installBtn) {
+    installBtn.addEventListener('click', function() {
+      if (!deferredPrompt) {
+        var toast = document.getElementById('pwaToast');
+        if (toast) toast.classList.remove('show');
+        return;
+      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function() {
+        deferredPrompt = null;
+        var toast = document.getElementById('pwaToast');
+        if (toast) toast.classList.remove('show');
+      });
+    });
+  }
+  var dismissBtn = document.getElementById('pwaDismissBtn');
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', function() {
+      var toast = document.getElementById('pwaToast');
+      if (toast) toast.classList.remove('show');
+    });
+  }
+  if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
+    setTimeout(function() {
+      var toast = document.getElementById('pwaToast');
+      if (toast) {
+        var txt = toast.querySelector('.pwa-toast-text span');
+        if (txt) txt.textContent = 'Tap Share → Add to Home Screen';
+        var ib = toast.querySelector('#pwaInstallBtn');
+        if (ib) ib.textContent = 'Got it';
+        toast.classList.add('show');
+      }
+    }, 4000);
+  }
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded', function() {
+  loadTheme();
+  createParticles();
+  setupToolCardMouse();
+  setupToggles();
+  setupUnitSwitches();
+  updateFtHelper();
+  setupLiveInputs();
+  updateHydro();
+  updateCalo();
+  calculateBMI();
+  calculateBP();
+  calculateSleep();
+  calculateSteps();
+  calculateNutrition();
+  calculateFitness();
+  calculateRecovery();
+  calculatePosture();
+  setupPWA();
+  console.log('✅ Healthofy loaded. Unit toggles + full Fitness cards + chat bots + PWA.');
+});
+</script>
+</body>
+</html>
